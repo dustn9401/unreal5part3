@@ -3,6 +3,8 @@
 
 #include "Player/ABPlayerController.h"
 
+#include "GameFramework/PlayerInput.h"
+
 void AABPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -11,3 +13,6 @@ void AABPlayerController::BeginPlay()
 	const FInputModeGameOnly GameOnlyInputMode;
 	SetInputMode(GameOnlyInputMode);
 }
+
+
+
