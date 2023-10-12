@@ -28,7 +28,7 @@ AABCharacterBase::AABCharacterBase()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.0f;
 
 	// Mesh
-	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -100.0f), FRotator(0.0f, -90.0f, 0.0f));
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -100.0f), FRotator(0.0f, 270.0f, 0.0f));
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	GetMesh()->SetCollisionProfileName(TEXT("CharacterMesh"));
 
@@ -37,10 +37,18 @@ AABCharacterBase::AABCharacterBase()
 	{
 		GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
 	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("CharacterMeshRef.Object == null!!"))
+	}
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/Characters/Mannequins/Animations/ABP_Quinn.ABP_Quinn_C"));
 	if (AnimInstanceClassRef.Class)
 	{
 		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("AnimInstanceClassRef.Class == null!!"))
 	}
 }
