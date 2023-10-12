@@ -49,4 +49,8 @@ protected:
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+
+// Character Control
+protected:
+	virtual void SetCharacterControlData(const UABCharacterControlData* CharacterControlData) override;
 };

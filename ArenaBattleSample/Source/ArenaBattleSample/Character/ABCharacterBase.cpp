@@ -3,6 +3,7 @@
 
 #include "Character/ABCharacterBase.h"
 
+#include "ABCharacterControlData.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -42,6 +43,7 @@ AABCharacterBase::AABCharacterBase()
 		UE_LOG(LogTemp, Error, TEXT("CharacterMeshRef.Object == null!!"))
 	}
 
+	// Animation
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/Characters/Mannequins/Animations/ABP_Quinn.ABP_Quinn_C"));
 	if (AnimInstanceClassRef.Class)
 	{
@@ -51,4 +53,28 @@ AABCharacterBase::AABCharacterBase()
 	{
 		UE_LOG(LogTemp, Error, TEXT("AnimInstanceClassRef.Class == null!!"))
 	}
+
+	// ControlData
+	static ConstructorHelpers::FObjectFinder<UABCharacterControlData> CharacterControlDataQuarterRef(TEXT("/Script/ArenaBattleSample.ABCharacterControlData'/Game/ArenaBattle/CharacterControl/ABC_Quarter.ABC_Quarter'"));
+	if (CharacterControlDataQuarterRef.Object)
+	{
+		CharacterControlDataMap.Emplace(ECharacterControlType::Quarter, CharacterControlDataQuarterRef.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<UABCharacterControlData> CharacterControlDataShoulderRef(TEXT("/Script/ArenaBattleSample.ABCharacterControlData'/Game/ArenaBattle/CharacterControl/ABC_Shoulder.ABC_Shoulder'"));
+	if (CharacterControlDataShoulderRef.Object)
+	{
+		CharacterControlDataMap.Emplace(ECharacterControlType::Shoulder, CharacterControlDataShoulderRef.Object);
+	}
+}
+
+void AABCharacterBase::SetCharacterControlData(const UABCharacterControlData* CharacterControlData)
+{
+	// Pawn
+	bUseControllerRotationYaw = CharacterControlData->bUseControllerRotationYaw;
+
+	// Movement
+	GetCharacterMovement()->bOrientRotationToMovement = CharacterControlData->bOrientRotationToMovement;
+	GetCharacterMovement()->bUseControllerDesiredRotation = CharacterControlData->bUseControllerDesiredRotation;
+	GetCharacterMovement()->RotationRate = CharacterControlData->RotationRate;
 }
