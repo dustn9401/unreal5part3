@@ -24,6 +24,13 @@ protected:
 public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	// Character Control
+protected:
+	void ChangeCharacterControl();
+	void SetCharacterControl(ECharacterControlType NewCharacterControlType);
+	virtual void SetCharacterControlData(const UABCharacterControlData* CharacterControlData) override;
+	
+
 // Camera
 protected:
 	// meta의 AllowPrivateAccess는 블루프린트에서 private, protected 멤버변수에 접근할 수 있게 해줌. 유니티의 SerializedField 와 유사한 개념인듯
@@ -42,15 +49,21 @@ protected:
 	TObjectPtr<class UInputAction> JumpAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<class UInputAction> MoveAction;
+	TObjectPtr<class UInputAction> ChangeControlAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	TObjectPtr<class UInputAction> LookAction;
+	TObjectPtr<class UInputAction> ShoulderMoveAction;
 
-	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> ShoulderLookAction;
 
-// Character Control
-protected:
-	virtual void SetCharacterControlData(const UABCharacterControlData* CharacterControlData) override;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<class UInputAction> QuarterMoveAction;
+
+	void ShoulderMove(const FInputActionValue& Value);
+	void ShoulderLook(const FInputActionValue& Value);
+
+	void QuarterMove(const FInputActionValue& Value);
+
+	ECharacterControlType CurrentCharacterControlType;
 };
