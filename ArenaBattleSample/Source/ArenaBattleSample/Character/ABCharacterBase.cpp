@@ -4,6 +4,7 @@
 #include "Character/ABCharacterBase.h"
 
 #include "ABCharacterControlData.h"
+#include "ABComboActionData.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -77,4 +78,90 @@ void AABCharacterBase::SetCharacterControlData(const UABCharacterControlData* Ch
 	GetCharacterMovement()->bOrientRotationToMovement = CharacterControlData->bOrientRotationToMovement;
 	GetCharacterMovement()->bUseControllerDesiredRotation = CharacterControlData->bUseControllerDesiredRotation;
 	GetCharacterMovement()->RotationRate = CharacterControlData->RotationRate;
+}
+
+void AABCharacterBase::ProcessComboCommand()
+{
+	UE_LOG(LogTemp, Log, TEXT("ProcessComboCommand() Called, CurrentCombo: %d, HasNextComboAction: %d, IsComboTimerValid: %d"), CurrentCombo, HasNextComboCommand, ComboTimerHandle.IsValid());
+	// 순서 중요
+	if (CurrentCombo == 0)
+	{
+		ComboActionBegin();
+		return;
+	}
+
+	// 콤보 타이머가 돌고있을 때 공격 인풋이 들어왔다면, 다음 콤보로 넘어갈 수 있게 해준다.
+	if (ComboTimerHandle.IsValid())
+	{
+		HasNextComboCommand = true;
+	}
+	else
+	{
+		// 필요 없는 코드인듯
+		// HasNextComboCommand = false;
+	}
+}
+
+void AABCharacterBase::ComboActionBegin()
+{
+	ensure(CurrentCombo == 0);
+	CurrentCombo = 1;
+
+	// 캐릭터의 이동 기능을 막아서 콤보 기능을 온전히 수행시키기 위한 코드
+	UE_LOG(LogTemp, Log, TEXT("Start ComboAction, GetMovementName(): %s"), *GetCharacterMovement()->GetMovementName())
+	GetCharacterMovement()->SetMovementMode(MOVE_None);
+
+	// 몽타주 실행
+	const float AttackSpeedRate = 1.0f;
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(ComboActionMontage, AttackSpeedRate);
+
+	// 몽타주가 종료될 때 ComboActionEnd가 실행되도록 이벤트 추가
+	FOnMontageEnded EndDelegate;
+	EndDelegate.BindUObject(this, &AABCharacterBase::ComboActionEnd);
+	AnimInstance->Montage_SetEndDelegate(EndDelegate, ComboActionMontage);
+
+	ComboTimerHandle.Invalidate();
+	SetComboCheckTimerIfPossible();
+}
+
+void AABCharacterBase::ComboActionEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
+{
+	ensure(CurrentCombo != 0);
+	CurrentCombo = 0;
+
+	UE_LOG(LogTemp, Log, TEXT("Finish ComboAction, GetMovementName(): %s"), *GetCharacterMovement()->GetMovementName())
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+}
+
+void AABCharacterBase::SetComboCheckTimerIfPossible()
+{
+	int32 ComboIndex = CurrentCombo - 1;
+	ensure(ComboActionData->EffectiveFrameCount.IsValidIndex(ComboIndex));
+
+	const float AttackSpeedRate = 1.0f;
+	float ComboEffectiveTime = (ComboActionData->EffectiveFrameCount[ComboIndex] / ComboActionData->FrameRate) / AttackSpeedRate;
+	if (ComboEffectiveTime > 0.0f)
+	{
+		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &AABCharacterBase::ComboCheck, ComboEffectiveTime, false);
+	}
+}
+
+void AABCharacterBase::ComboCheck()
+{
+	ComboTimerHandle.Invalidate();
+	if (HasNextComboCommand)
+	{
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+
+		CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, ComboActionData->MaxComboCount);
+		const FName NextSectionName = *FString::Printf(TEXT("%s%d"), *ComboActionData->MontageSectionNamePrefix, CurrentCombo);
+
+		// JumpToSection으로, 현재 콤보의 남은 애니메이션을 생략하고 다음콤보로 바로 이동
+		AnimInstance->Montage_JumpToSection(NextSectionName, ComboActionMontage);
+		
+		SetComboCheckTimerIfPossible();
+		
+		HasNextComboCommand = false;
+	}
 }
