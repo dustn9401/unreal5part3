@@ -71,4 +71,6 @@ protected:
 	ECharacterControlType CurrentCharacterControlType;
 
 	void Attack();
+
+	virtual void SetDead() override;
 };

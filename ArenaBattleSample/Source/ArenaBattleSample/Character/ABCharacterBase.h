@@ -52,4 +52,13 @@ protected:
 // Attack Hit
 protected:
 	virtual void AttackHitCheck() override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	
+// Dead
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Stat, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<class UAnimMontage> DeadMontage;
+	
+	virtual void SetDead();
+	void PlayDeadAnimation();
 };

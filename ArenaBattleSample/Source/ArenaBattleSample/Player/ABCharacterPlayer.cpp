@@ -71,6 +71,9 @@ void AABCharacterPlayer::BeginPlay()
 	Super::BeginPlay();
 
 	SetCharacterControl(CurrentCharacterControlType);
+
+	if (!InputEnabled())
+		EnableInput(CastChecked<APlayerController>(GetController()));
 }
 
 void AABCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -169,6 +172,14 @@ void AABCharacterPlayer::QuarterMove(const FInputActionValue& Value)
 void AABCharacterPlayer::Attack()
 {
 	ProcessComboCommand();
+}
+
+void AABCharacterPlayer::SetDead()
+{
+	Super::SetDead();
+
+	if (InputEnabled())
+		DisableInput(CastChecked<APlayerController>(GetController()));
 }
 
 void AABCharacterPlayer::SetCharacterControlData(const UABCharacterControlData* CharacterControlData)
