@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interface/ABAnimationAttackInterface.h"
 #include "ABCharacterBase.generated.h"
 
 UENUM()
@@ -14,7 +15,7 @@ enum class ECharacterControlType : uint8
 };
 
 UCLASS()
-class ARENABATTLESAMPLE_API AABCharacterBase : public ACharacter
+class ARENABATTLESAMPLE_API AABCharacterBase : public ACharacter, public IABAnimationAttackInterface
 {
 	GENERATED_BODY()
 
@@ -47,4 +48,8 @@ protected:
 
 	FTimerHandle ComboTimerHandle;
 	bool HasNextComboCommand = false;
+
+// Attack Hit
+protected:
+	virtual void AttackHitCheck() override;
 };

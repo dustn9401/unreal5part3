@@ -7,6 +7,7 @@
 #include "ABComboActionData.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Physics/ABCollision.h"
 
 // Sets default values
 AABCharacterBase::AABCharacterBase()
@@ -18,7 +19,7 @@ AABCharacterBase::AABCharacterBase()
 
 	// Capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.0f, 96.0f);
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+	GetCapsuleComponent()->SetCollisionProfileName(CPROFILE_ABCAPSULE);
 
 	// Movement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -32,16 +33,12 @@ AABCharacterBase::AABCharacterBase()
 	// Mesh
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -100.0f), FRotator(0.0f, 270.0f, 0.0f));
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
-	GetMesh()->SetCollisionProfileName(TEXT("CharacterMesh"));
+	GetMesh()->SetCollisionProfileName(TEXT("NoCollision"));
 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> CharacterMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/InfinityBladeWarriors/Character/CompleteCharacters/SK_CharM_Cardboard.SK_CharM_Cardboard'"));
 	if (CharacterMeshRef.Object)
 	{
 		GetMesh()->SetSkeletalMesh(CharacterMeshRef.Object);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("CharacterMeshRef.Object == null!!"))
 	}
 
 	// Animation
@@ -49,10 +46,6 @@ AABCharacterBase::AABCharacterBase()
 	if (AnimInstanceClassRef.Class)
 	{
 		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("AnimInstanceClassRef.Class == null!!"))
 	}
 
 	// ControlData
@@ -66,6 +59,24 @@ AABCharacterBase::AABCharacterBase()
 	if (CharacterControlDataShoulderRef.Object)
 	{
 		CharacterControlDataMap.Emplace(ECharacterControlType::Shoulder, CharacterControlDataShoulderRef.Object);
+	}
+
+	if (!ComboActionMontage->IsValidLowLevel())
+	{
+		static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ArenaBattle/Animation/AM_Combo_Attack.AM_Combo_Attack'"));
+		if (ComboActionMontageRef.Object)
+		{
+			ComboActionMontage = ComboActionMontageRef.Object;
+		}
+	}
+
+	if (!ComboActionData->IsValidLowLevel())
+	{
+		static ConstructorHelpers::FObjectFinder<UABComboActionData> ComboActionDataRef(TEXT("/Script/ArenaBattleSample.ABComboActionData'/Game/ArenaBattle/CharacterAction/ABA_ComboAttack.ABA_ComboAttack'"));
+		if (ComboActionDataRef.Object)
+		{
+			ComboActionData = ComboActionDataRef.Object;
+		}
 	}
 }
 
@@ -164,4 +175,30 @@ void AABCharacterBase::ComboCheck()
 		
 		HasNextComboCommand = false;
 	}
+}
+
+void AABCharacterBase::AttackHitCheck()
+{
+	FHitResult OutHitResult;
+	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
+
+	const float AttackRange = 40.0f;
+	const float AttackRadius = 50.0f;
+	const float AttackDamage = 30.0f;
+	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
+	const FVector End = Start + GetActorForwardVector() * AttackRange;
+
+	bool HitDetected = GetWorld()-> SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANNEL_ABACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
+	if (HitDetected)
+	{
+		
+	}
+
+#if ENABLE_DRAW_DEBUG
+	FVector CapsuleOrigin = Start + (End - Start) * .5f;
+	float CapsuleHalfHeight = AttackRange * .5f;
+	FColor DrawColor = HitDetected ? FColor::Green : FColor::Red;
+
+	DrawDebugCapsule(GetWorld(), CapsuleOrigin, CapsuleHalfHeight, AttackRadius, FRotationMatrix::MakeFromZ(GetActorForwardVector()).ToQuat(), DrawColor, false, 5.0f);
+#endif
 }
