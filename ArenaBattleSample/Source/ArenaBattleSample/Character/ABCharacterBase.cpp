@@ -144,6 +144,8 @@ void AABCharacterBase::ComboActionBegin()
 
 	ComboTimerHandle.Invalidate();
 	SetComboCheckTimerIfPossible();
+
+	
 }
 
 void AABCharacterBase::ComboActionEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
