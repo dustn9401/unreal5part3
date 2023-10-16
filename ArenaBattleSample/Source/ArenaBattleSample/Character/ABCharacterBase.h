@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interface/ABAnimationAttackInterface.h"
+#include "Interface/ABCharacterWidgetInterface.h"
 #include "ABCharacterBase.generated.h"
 
 UENUM()
@@ -15,13 +16,15 @@ enum class ECharacterControlType : uint8
 };
 
 UCLASS()
-class ARENABATTLESAMPLE_API AABCharacterBase : public ACharacter, public IABAnimationAttackInterface
+class ARENABATTLESAMPLE_API AABCharacterBase : public ACharacter, public IABAnimationAttackInterface, public IABCharacterWidgetInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	AABCharacterBase();
+
+	virtual void PostInitializeComponents() override;
 
 protected:
 	virtual void SetCharacterControlData(const class UABCharacterControlData* CharacterControlData);
@@ -63,4 +66,15 @@ protected:
 	void PlayDeadAnimation();
 
 	float DeadEventDelayTime = 5.0f;
+
+// Stat
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stat, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<class UABCharacterStatComponent> Stat;
+
+// UI Widget
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Stat, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<class UABWidgetComponent> HpBar;
+
+	virtual void SetCharacterWidget(UABUserWidget* InUserWidget) override;
 };
