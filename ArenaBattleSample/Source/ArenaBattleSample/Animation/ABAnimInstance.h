@@ -49,5 +49,5 @@ protected:
 	float JumpingThreshold;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Character)
-	float TransitionRatio;
+	float TransitionRatio;	// 애니메이션의 몆 퍼센트가 남았을 때 다음 애니메이션으로 전환할건지
 };
