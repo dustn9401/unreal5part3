@@ -122,6 +122,11 @@ AABCharacterBase::AABCharacterBase()
 	TakeItemDelegates.Emplace(FOnTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::EquipWeapon)));
 	TakeItemDelegates.Emplace(FOnTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::DrinkPotion)));
 	TakeItemDelegates.Emplace(FOnTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::ReadScroll)));
+
+	// std::function으로도 비슷하게 사용 가능
+	TakeItemFunctions.Emplace(std::bind(&AABCharacterBase::EquipWeapon, this, std::placeholders::_1));
+	TakeItemFunctions.Emplace(std::bind(&AABCharacterBase::DrinkPotion, this, std::placeholders::_1));
+	TakeItemFunctions.Emplace(std::bind(&AABCharacterBase::ReadScroll, this, std::placeholders::_1));
 }
 
 void AABCharacterBase::PostInitializeComponents()
@@ -299,6 +304,7 @@ void AABCharacterBase::TakeItem(UABItemData* InItemData)
 	if (InItemData)
 	{
 		TakeItemDelegates[static_cast<uint8>(InItemData->Type)].ItemDelegate.ExecuteIfBound(InItemData);
+		TakeItemFunctions[static_cast<uint8>(InItemData->Type)](InItemData);
 	}
 }
 

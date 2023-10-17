@@ -7,6 +7,7 @@
 #include "Interface/ABAnimationAttackInterface.h"
 #include "Interface/ABCharacterItemInterface.h"
 #include "Interface/ABCharacterWidgetInterface.h"
+#include "functional"
 #include "ABCharacterBase.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogABCharacter, Log, All);
@@ -101,6 +102,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Item)
 	TArray<FOnTakeItemDelegateWrapper> TakeItemDelegates;	// EItemType을 인덱스로 사용하기 때문에, 주의
+
+	// UPROPERTY가 필요 없다면, function을 사용할 수도 있을듯
+	TArray<std::function<void(UABItemData*)>> TakeItemFunctions;
 
 	virtual void DrinkPotion(class UABItemData* InItemData);
 	virtual void EquipWeapon(class UABItemData* InItemData);
