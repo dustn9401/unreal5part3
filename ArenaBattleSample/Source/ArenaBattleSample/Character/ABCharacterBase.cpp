@@ -10,10 +10,13 @@
 #include "Components/WidgetComponent.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Item/ABItemData.h"
 #include "Physics/ABCollision.h"
 #include "UI/ABHpBarWidget.h"
 #include "UI/ABUserWidget.h"
 #include "UI/ABWidgetComponent.h"
+
+DEFINE_LOG_CATEGORY(LogABCharacter)
 
 // Sets default values
 AABCharacterBase::AABCharacterBase()
@@ -67,7 +70,7 @@ AABCharacterBase::AABCharacterBase()
 		CharacterControlDataMap.Emplace(ECharacterControlType::Shoulder, CharacterControlDataShoulderRef.Object);
 	}
 
-	if (!ComboActionMontage->IsValidLowLevel())
+	if (ComboActionMontage == nullptr)
 	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> ComboActionMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ArenaBattle/Animation/AM_Combo_Attack.AM_Combo_Attack'"));
 		if (ComboActionMontageRef.Object)
@@ -76,7 +79,7 @@ AABCharacterBase::AABCharacterBase()
 		}
 	}
 
-	if (!ComboActionData->IsValidLowLevel())
+	if (ComboActionData == nullptr)
 	{
 		static ConstructorHelpers::FObjectFinder<UABComboActionData> ComboActionDataRef(TEXT("/Script/ArenaBattleSample.ABComboActionData'/Game/ArenaBattle/CharacterAction/ABA_ComboAttack.ABA_ComboAttack'"));
 		if (ComboActionDataRef.Object)
@@ -85,7 +88,7 @@ AABCharacterBase::AABCharacterBase()
 		}
 	}
 
-	if (!DeadMontage->IsValidLowLevel())
+	if (DeadMontage == nullptr)
 	{
 		static ConstructorHelpers::FObjectFinder<UAnimMontage> DeadMontageRef(TEXT("/Script/Engine.AnimMontage'/Game/ArenaBattle/Animation/AM_Dead.AM_Dead'"));
 		if (DeadMontageRef.Object)
@@ -116,9 +119,9 @@ AABCharacterBase::AABCharacterBase()
 	}
 
 	// Item Actions
-	TakeItemDelegates.Emplace(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::EquipWeapon));
-	TakeItemDelegates.Emplace(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::DrinkPotion));
-	TakeItemDelegates.Emplace(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::ReadScroll));
+	TakeItemDelegates.Emplace(FOnTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::EquipWeapon)));
+	TakeItemDelegates.Emplace(FOnTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::DrinkPotion)));
+	TakeItemDelegates.Emplace(FOnTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::ReadScroll)));
 }
 
 void AABCharacterBase::PostInitializeComponents()
@@ -292,17 +295,24 @@ void AABCharacterBase::SetCharacterWidget(UABUserWidget* InUserWidget)
 void AABCharacterBase::TakeItem(UABItemData* InItemData)
 {
 	// 여기에서 아이템 종류에 따라 분기하여 효과 적용
-	
+	UE_LOG(LogTemp, Log, TEXT("Called TakeItem"));
+	if (InItemData)
+	{
+		TakeItemDelegates[static_cast<uint8>(InItemData->Type)].ItemDelegate.ExecuteIfBound(InItemData);
+	}
 }
 
 void AABCharacterBase::DrinkPotion(UABItemData* InItemData)
 {
+	UE_LOG(LogABCharacter, Log, TEXT("DrinkPotion"));
 }
 
 void AABCharacterBase::EquipWeapon(UABItemData* InItemData)
 {
+	UE_LOG(LogABCharacter, Log, TEXT("EquipWeapon"));
 }
 
 void AABCharacterBase::ReadScroll(UABItemData* InItemData)
 {
+	UE_LOG(LogABCharacter, Log, TEXT("ReadScroll"));
 }

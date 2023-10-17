@@ -16,7 +16,7 @@ public:
 	AABItemBox();
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category=Item)
+	UPROPERTY(EditAnywhere, Category=Item)
 	TObjectPtr<class UABItemData> ItemData;
 	
 	UPROPERTY(VisibleAnywhere, Category=Box)

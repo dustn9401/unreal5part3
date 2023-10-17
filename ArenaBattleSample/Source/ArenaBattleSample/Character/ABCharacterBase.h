@@ -9,6 +9,8 @@
 #include "Interface/ABCharacterWidgetInterface.h"
 #include "ABCharacterBase.generated.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogABCharacter, Log, All);
+
 UENUM()
 enum class ECharacterControlType : uint8
 {
@@ -18,12 +20,13 @@ enum class ECharacterControlType : uint8
 
 DECLARE_DELEGATE_OneParam(FOnTakeItemDelegate, class UABItemData* /*InItemData*/)
 
+// 딜리게이트를 컨테이너에 담기 위한 래퍼클래스. 딜리게이트 타입 자체를 컨테이너 타입으로 지정할 수는 있으나, UPROPERTY를 붙일 수 없음
 USTRUCT(BlueprintType)
-struct FTakeItemDelegateWrapper
+struct FOnTakeItemDelegateWrapper
 {
 	GENERATED_BODY()
-	FTakeItemDelegateWrapper() {}
-	FTakeItemDelegateWrapper(const FOnTakeItemDelegate& InItemDelegate) : ItemDelegate(InItemDelegate) {}
+	FOnTakeItemDelegateWrapper() {}
+	FOnTakeItemDelegateWrapper(const FOnTakeItemDelegate& InItemDelegate) : ItemDelegate(InItemDelegate) {}
 	FOnTakeItemDelegate ItemDelegate;
 };
 
@@ -94,10 +97,10 @@ protected:
 	virtual void SetCharacterWidget(UABUserWidget* InUserWidget) override;
 
 // Item
-	virtual void TakeItem(UABItemData* InItemData) override;
+	virtual void TakeItem(UABItemData* InItemData) override;	// IABCharacterItemInterface Impl
 
-	UPROPERTY()
-	TArray<FOnTakeItemDelegate> TakeItemDelegates;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Item)
+	TArray<FOnTakeItemDelegateWrapper> TakeItemDelegates;	// EItemType을 인덱스로 사용하기 때문에, 주의
 
 	virtual void DrinkPotion(class UABItemData* InItemData);
 	virtual void EquipWeapon(class UABItemData* InItemData);
