@@ -282,3 +282,7 @@ void AABCharacterBase::SetCharacterWidget(UABUserWidget* InUserWidget)
 		Stat->OnHpChanged.AddUObject(HpBarWidget, &UABHpBarWidget::UpdateHpBar);
 	}
 }
+
+void AABCharacterBase::TakeItem(UABItemData* InItemData)
+{
+}

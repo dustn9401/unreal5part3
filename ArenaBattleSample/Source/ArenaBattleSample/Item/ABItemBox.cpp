@@ -4,6 +4,7 @@
 #include "Item/ABItemBox.h"
 
 #include "Components/BoxComponent.h"
+#include "Interface/ABCharacterItemInterface.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Physics/ABCollision.h"
 
@@ -41,6 +42,18 @@ AABItemBox::AABItemBox()
 
 void AABItemBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
 {
+	UE_LOG(LogTemp, Log, TEXT("ABItemBox.OnOverlapBegin(%s, %s, %s, %d, %d, %s)"), *OverlappedComponent->GetName(), *OtherActor->GetName(), *OtherComp->GetName(), OtherBodyIndex, bFromSweep, *SweepHitResult.BoneName.ToString());
+	if (ItemData == nullptr)
+	{
+		Destroy();
+		return;
+	}
+	
+	if (const auto ICharacterItemInst = Cast<IABCharacterItemInterface>(OtherActor))
+	{
+		ICharacterItemInst->TakeItem(ItemData);
+	}
+	
 	Effect->Activate(true);
 	Mesh->SetHiddenInGame(true);
 	SetActorEnableCollision(false);

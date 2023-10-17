@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interface/ABAnimationAttackInterface.h"
+#include "Interface/ABCharacterItemInterface.h"
 #include "Interface/ABCharacterWidgetInterface.h"
 #include "ABCharacterBase.generated.h"
 
@@ -16,7 +17,10 @@ enum class ECharacterControlType : uint8
 };
 
 UCLASS()
-class ARENABATTLESAMPLE_API AABCharacterBase : public ACharacter, public IABAnimationAttackInterface, public IABCharacterWidgetInterface
+class ARENABATTLESAMPLE_API AABCharacterBase : public ACharacter,
+public IABAnimationAttackInterface,
+public IABCharacterWidgetInterface,
+public IABCharacterItemInterface
 {
 	GENERATED_BODY()
 
@@ -77,4 +81,7 @@ protected:
 	TObjectPtr<class UABWidgetComponent> HpBar;
 
 	virtual void SetCharacterWidget(UABUserWidget* InUserWidget) override;
+
+// Item
+	virtual void TakeItem(UABItemData* InItemData) override;
 };

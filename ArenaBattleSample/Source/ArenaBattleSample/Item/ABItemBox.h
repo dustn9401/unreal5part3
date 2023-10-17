@@ -16,6 +16,9 @@ public:
 	AABItemBox();
 
 protected:
+	UPROPERTY(VisibleAnywhere, Category=Item)
+	TObjectPtr<class UABItemData> ItemData;
+	
 	UPROPERTY(VisibleAnywhere, Category=Box)
 	TObjectPtr<class UBoxComponent> Trigger;	// 루트컴포넌트
 
