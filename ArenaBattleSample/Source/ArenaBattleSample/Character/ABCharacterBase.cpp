@@ -99,6 +99,7 @@ AABCharacterBase::AABCharacterBase()
 		Stat = CreateDefaultSubobject<UABCharacterStatComponent>(TEXT("Stat"));
 	}
 
+	// Widget
 	if (!HpBar)
 	{
 		HpBar = CreateDefaultSubobject<UABWidgetComponent>(TEXT("Widget"));
@@ -113,6 +114,11 @@ AABCharacterBase::AABCharacterBase()
 			HpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
 	}
+
+	// Item Actions
+	TakeItemDelegates.Emplace(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::EquipWeapon));
+	TakeItemDelegates.Emplace(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::DrinkPotion));
+	TakeItemDelegates.Emplace(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::ReadScroll));
 }
 
 void AABCharacterBase::PostInitializeComponents()
@@ -284,5 +290,19 @@ void AABCharacterBase::SetCharacterWidget(UABUserWidget* InUserWidget)
 }
 
 void AABCharacterBase::TakeItem(UABItemData* InItemData)
+{
+	// 여기에서 아이템 종류에 따라 분기하여 효과 적용
+	
+}
+
+void AABCharacterBase::DrinkPotion(UABItemData* InItemData)
+{
+}
+
+void AABCharacterBase::EquipWeapon(UABItemData* InItemData)
+{
+}
+
+void AABCharacterBase::ReadScroll(UABItemData* InItemData)
 {
 }

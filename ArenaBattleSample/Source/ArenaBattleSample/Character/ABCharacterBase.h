@@ -16,6 +16,17 @@ enum class ECharacterControlType : uint8
 	Quarter
 };
 
+DECLARE_DELEGATE_OneParam(FOnTakeItemDelegate, class UABItemData* /*InItemData*/)
+
+USTRUCT(BlueprintType)
+struct FTakeItemDelegateWrapper
+{
+	GENERATED_BODY()
+	FTakeItemDelegateWrapper() {}
+	FTakeItemDelegateWrapper(const FOnTakeItemDelegate& InItemDelegate) : ItemDelegate(InItemDelegate) {}
+	FOnTakeItemDelegate ItemDelegate;
+};
+
 UCLASS()
 class ARENABATTLESAMPLE_API AABCharacterBase : public ACharacter,
 public IABAnimationAttackInterface,
@@ -84,4 +95,11 @@ protected:
 
 // Item
 	virtual void TakeItem(UABItemData* InItemData) override;
+
+	UPROPERTY()
+	TArray<FOnTakeItemDelegate> TakeItemDelegates;
+
+	virtual void DrinkPotion(class UABItemData* InItemData);
+	virtual void EquipWeapon(class UABItemData* InItemData);
+	virtual void ReadScroll(class UABItemData* InItemData);
 };
