@@ -11,6 +11,7 @@
 #include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Item/ABItemData.h"
+#include "Item/ABWeaponItemData.h"
 #include "Physics/ABCollision.h"
 #include "UI/ABHpBarWidget.h"
 #include "UI/ABUserWidget.h"
@@ -123,10 +124,9 @@ AABCharacterBase::AABCharacterBase()
 	TakeItemDelegates.Emplace(FOnTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::DrinkPotion)));
 	TakeItemDelegates.Emplace(FOnTakeItemDelegateWrapper(FOnTakeItemDelegate::CreateUObject(this, &AABCharacterBase::ReadScroll)));
 
-	// std::function으로도 비슷하게 사용 가능
-	TakeItemFunctions.Emplace(std::bind(&AABCharacterBase::EquipWeapon, this, std::placeholders::_1));
-	TakeItemFunctions.Emplace(std::bind(&AABCharacterBase::DrinkPotion, this, std::placeholders::_1));
-	TakeItemFunctions.Emplace(std::bind(&AABCharacterBase::ReadScroll, this, std::placeholders::_1));
+	// Weapon
+	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
+	Weapon->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
 }
 
 void AABCharacterBase::PostInitializeComponents()
@@ -191,8 +191,6 @@ void AABCharacterBase::ComboActionBegin()
 
 	ComboTimerHandle.Invalidate();
 	SetComboCheckTimerIfPossible();
-
-	
 }
 
 void AABCharacterBase::ComboActionEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
@@ -304,7 +302,6 @@ void AABCharacterBase::TakeItem(UABItemData* InItemData)
 	if (InItemData)
 	{
 		TakeItemDelegates[static_cast<uint8>(InItemData->Type)].ItemDelegate.ExecuteIfBound(InItemData);
-		TakeItemFunctions[static_cast<uint8>(InItemData->Type)](InItemData);
 	}
 }
 
@@ -315,7 +312,11 @@ void AABCharacterBase::DrinkPotion(UABItemData* InItemData)
 
 void AABCharacterBase::EquipWeapon(UABItemData* InItemData)
 {
-	UE_LOG(LogABCharacter, Log, TEXT("EquipWeapon"));
+	UABWeaponItemData* WeaponItemData = Cast<UABWeaponItemData>(InItemData);
+	if (WeaponItemData)
+	{
+		Weapon->SetSkeletalMesh(WeaponItemData->WeaponMesh);
+	}
 }
 
 void AABCharacterBase::ReadScroll(UABItemData* InItemData)

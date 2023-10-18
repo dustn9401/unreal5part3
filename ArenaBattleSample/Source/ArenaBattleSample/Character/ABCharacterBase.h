@@ -98,13 +98,13 @@ protected:
 	virtual void SetCharacterWidget(UABUserWidget* InUserWidget) override;
 
 // Item
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Equipment, meta=(AllowPrivateAccess="true"))
+	TObjectPtr<class USkeletalMeshComponent> Weapon;
+	
 	virtual void TakeItem(UABItemData* InItemData) override;	// IABCharacterItemInterface Impl
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Item)
 	TArray<FOnTakeItemDelegateWrapper> TakeItemDelegates;	// EItemType을 인덱스로 사용하기 때문에, 주의
-
-	// UPROPERTY가 필요 없다면, function을 사용할 수도 있을듯
-	TArray<std::function<void(UABItemData*)>> TakeItemFunctions;
 
 	virtual void DrinkPotion(class UABItemData* InItemData);
 	virtual void EquipWeapon(class UABItemData* InItemData);

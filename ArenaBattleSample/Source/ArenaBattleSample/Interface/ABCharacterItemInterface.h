@@ -14,7 +14,7 @@ class UABCharacterItemInterface : public UInterface
 };
 
 /**
- * 
+ * ItemBox가 자신과 충돌한 캐릭터에 호출
  */
 class ARENABATTLESAMPLE_API IABCharacterItemInterface
 {
