@@ -16,5 +16,5 @@ class ARENABATTLESAMPLE_API UABWeaponItemData : public UABItemData
 
 public:
 	UPROPERTY(EditAnywhere, Category=Weapon)
-	TObjectPtr<USkeletalMesh> WeaponMesh;
+	TSoftObjectPtr<USkeletalMesh> WeaponMesh;
 };

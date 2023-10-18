@@ -315,7 +315,14 @@ void AABCharacterBase::EquipWeapon(UABItemData* InItemData)
 	UABWeaponItemData* WeaponItemData = Cast<UABWeaponItemData>(InItemData);
 	if (WeaponItemData)
 	{
-		Weapon->SetSkeletalMesh(WeaponItemData->WeaponMesh);
+		if (WeaponItemData->WeaponMesh.IsPending())
+		{
+			Weapon->SetSkeletalMesh(WeaponItemData->WeaponMesh.LoadSynchronous());
+		}
+		else
+		{
+			Weapon->SetSkeletalMesh(WeaponItemData->WeaponMesh.Get());
+		}
 	}
 }
 
