@@ -2,7 +2,6 @@
 
 
 #include "Gimmick/ABStageGimmick.h"
-
 #include "Components/BoxComponent.h"
 #include "Physics/ABCollision.h"
 
@@ -52,6 +51,14 @@ AABStageGimmick::AABStageGimmick()
 			GateTriggers.Add(GateTrigger);
 		}
 	}
+
+	// State Section
+	CurrentState = EStageState::Ready;
+	
+	StateChangeActions.Add(EStageState::Ready, FOnStageChangedDelegate::CreateUObject(this, &AABStageGimmick::SetReady));
+	StateChangeActions.Add(EStageState::Fight, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AABStageGimmick::SetFight)));
+	StateChangeActions.Add(EStageState::Reward, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AABStageGimmick::SetChooseReward)));
+	StateChangeActions.Add(EStageState::Next, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AABStageGimmick::SetChooseNext)));
 }
 
 
@@ -59,10 +66,43 @@ void AABStageGimmick::OnStageTriggerBeginOverlap(UPrimitiveComponent* Overlapped
 	const FHitResult& SweepHitResult)
 {
 	UE_LOG(LogTemp, Log, TEXT("AABStageGimmick::OnStageTriggerBeginOverlap(%s, %s, %s, %d, %d, %s)"), *OverlappedComponent->GetName(), *OtherActor->GetName(), *OtherComp->GetName(), OtherBodyIndex, bFromSweep, *SweepHitResult.BoneName.ToString());
+	SetState(EStageState::Fight);
 }
 
 void AABStageGimmick::OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 	const FHitResult& SweepHitResult)
 {
 	UE_LOG(LogTemp, Log, TEXT("AABStageGimmick::OnGateTriggerBeginOverlap(%s, %s, %s, %d, %d, %s)"), *OverlappedComponent->GetName(), *OtherActor->GetName(), *OtherComp->GetName(), OtherBodyIndex, bFromSweep, *SweepHitResult.BoneName.ToString());
+	SetState(EStageState::Next);
+}
+
+void AABStageGimmick::SetState(EStageState InNewState)
+{
+	CurrentState = InNewState;
+
+	if (StateChangeActions.Contains(InNewState))
+	{
+		// ReSharper disable once CppExpressionWithoutSideEffects
+		StateChangeActions[CurrentState].StageDelegate.ExecuteIfBound();
+	}
+}
+
+void AABStageGimmick::SetReady()
+{
+	UE_LOG(LogTemp, Log, TEXT("AABStageGimmick::SetReady"));
+}
+
+void AABStageGimmick::SetFight()
+{
+	UE_LOG(LogTemp, Log, TEXT("AABStageGimmick::SetFight"));
+}
+
+void AABStageGimmick::SetChooseReward()
+{
+	UE_LOG(LogTemp, Log, TEXT("AABStageGimmick::SetChooseReward"));
+}
+
+void AABStageGimmick::SetChooseNext()
+{
+	UE_LOG(LogTemp, Log, TEXT("AABStageGimmick::SetChooseNext"));
 }
