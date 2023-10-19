@@ -56,6 +56,9 @@ protected:
 	UFUNCTION()
 	void OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult);
 
+	void OpenAllGates();
+	void CloseAllGates();
+
 // State Section
 protected:
 	UPROPERTY(EditAnywhere, Category=Stage, meta=(AllowPrivateAccess="true"))

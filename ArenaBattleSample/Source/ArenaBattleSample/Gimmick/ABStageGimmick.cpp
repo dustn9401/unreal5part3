@@ -55,7 +55,7 @@ AABStageGimmick::AABStageGimmick()
 	// State Section
 	CurrentState = EStageState::Ready;
 	
-	StateChangeActions.Add(EStageState::Ready, FOnStageChangedDelegate::CreateUObject(this, &AABStageGimmick::SetReady));
+	StateChangeActions.Add(EStageState::Ready, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AABStageGimmick::SetReady)));
 	StateChangeActions.Add(EStageState::Fight, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AABStageGimmick::SetFight)));
 	StateChangeActions.Add(EStageState::Reward, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AABStageGimmick::SetChooseReward)));
 	StateChangeActions.Add(EStageState::Next, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AABStageGimmick::SetChooseNext)));
@@ -66,14 +66,36 @@ void AABStageGimmick::OnStageTriggerBeginOverlap(UPrimitiveComponent* Overlapped
 	const FHitResult& SweepHitResult)
 {
 	UE_LOG(LogTemp, Log, TEXT("AABStageGimmick::OnStageTriggerBeginOverlap(%s, %s, %s, %d, %d, %s)"), *OverlappedComponent->GetName(), *OtherActor->GetName(), *OtherComp->GetName(), OtherBodyIndex, bFromSweep, *SweepHitResult.BoneName.ToString());
-	SetState(EStageState::Fight);
 }
 
 void AABStageGimmick::OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 	const FHitResult& SweepHitResult)
 {
 	UE_LOG(LogTemp, Log, TEXT("AABStageGimmick::OnGateTriggerBeginOverlap(%s, %s, %s, %d, %d, %s)"), *OverlappedComponent->GetName(), *OtherActor->GetName(), *OtherComp->GetName(), OtherBodyIndex, bFromSweep, *SweepHitResult.BoneName.ToString());
-	SetState(EStageState::Next);
+}
+
+void AABStageGimmick::OpenAllGates()
+{
+	for(const auto Gate : Gates)
+	{
+		FRotator TargetRot = FRotator(0.0f, -90.0f, 0.0f);
+		if (Gate.Value->GetRelativeRotation().Equals(TargetRot))
+			continue;
+		
+		Gate.Value->SetRelativeRotation(TargetRot);	
+	}
+}
+
+void AABStageGimmick::CloseAllGates()
+{
+	for(const auto Gate : Gates)
+	{
+		FRotator TargetRot = FRotator::ZeroRotator;
+		if (Gate.Value->GetRelativeRotation().Equals(TargetRot))
+			continue;
+		
+		Gate.Value->SetRelativeRotation(TargetRot);
+	}
 }
 
 void AABStageGimmick::SetState(EStageState InNewState)
@@ -90,19 +112,45 @@ void AABStageGimmick::SetState(EStageState InNewState)
 void AABStageGimmick::SetReady()
 {
 	UE_LOG(LogTemp, Log, TEXT("AABStageGimmick::SetReady"));
+	StageTrigger->SetCollisionProfileName(CPROFILE_ABTRIGGER);
+	for(const auto GateTrigger : GateTriggers)
+	{
+		GateTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+	}
+
+	CloseAllGates();
 }
 
 void AABStageGimmick::SetFight()
 {
 	UE_LOG(LogTemp, Log, TEXT("AABStageGimmick::SetFight"));
+	StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+	for(const auto GateTrigger : GateTriggers)
+	{
+		GateTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+	}
+
+	CloseAllGates();
 }
 
 void AABStageGimmick::SetChooseReward()
 {
 	UE_LOG(LogTemp, Log, TEXT("AABStageGimmick::SetChooseReward"));
+	StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+	for(const auto GateTrigger : GateTriggers)
+	{
+		GateTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+	}
 }
 
 void AABStageGimmick::SetChooseNext()
 {
 	UE_LOG(LogTemp, Log, TEXT("AABStageGimmick::SetChooseNext"));
+	StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
+	for(const auto GateTrigger : GateTriggers)
+	{
+		GateTrigger->SetCollisionProfileName(CPROFILE_ABTRIGGER);
+	}
+
+	OpenAllGates();
 }
