@@ -7,7 +7,7 @@
 #include "AnimNotify_AttackHitCheck.generated.h"
 
 /**
- * 
+ * 애니메이터 -> 코드 이벤트 전용 클래스
  */
 UCLASS()
 class ARENABATTLESAMPLE_API UAnimNotify_AttackHitCheck : public UAnimNotify
