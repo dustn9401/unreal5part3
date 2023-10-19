@@ -34,6 +34,10 @@ public:
 	// Sets default values for this actor's properties
 	AABStageGimmick();
 
+// Editor
+protected:
+	virtual void OnConstruction(const FTransform& Transform) override;
+	
 // Stage Section
 protected:
 	UPROPERTY(VisibleAnywhere, Category=Stage, meta=(AllowPrivateAccess="true"))
@@ -72,4 +76,33 @@ protected:
 	void SetFight();
 	void SetChooseReward();
 	void SetChooseNext();
+
+// Fight Section
+protected:
+	UPROPERTY(EditAnywhere, Category=Fight, meta=(AllowPrivateAccess="true"))
+	TSubclassOf<class AABCharacterNonPlayer> OpponentClass;
+
+	UPROPERTY(EditAnywhere, Category=Fight, meta=(AllowPrivateAccess="true"))
+	float OpponentSpawnTime;
+
+	UFUNCTION()
+	void OnOpponentDestroyed(AActor* DestroyedActor);
+
+	FTimerHandle OpponentTimerHandle;
+	void OnOpponentSpawn();
+
+// Reward Section
+protected:
+	UPROPERTY(VisibleAnywhere, Category=Reward, meta=(AllowPrivateAccess="true"))
+	TSubclassOf<class AABItemBox> RewardBoxClass;
+
+	UPROPERTY(VisibleAnywhere, Category=Reward, meta=(AllowPrivateAccess="true"))
+	TArray<TWeakObjectPtr<class AABItemBox>> RewardBoxes;	// ABItemBox는 스스로를 파괴시킬 수 있기 때문에 TWeakObjectPtr을 사용
+
+	TMap<FName, FVector> RewardBoxLocations;
+
+	UFUNCTION()
+	void OnRewardTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult);
+
+	void SpawnRewardBoxes();
 };

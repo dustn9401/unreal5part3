@@ -21,7 +21,13 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, Category=Box)
 	TObjectPtr<class UBoxComponent> Trigger;	// 루트컴포넌트
+public:
+	FORCEINLINE TObjectPtr<UBoxComponent> GetTrigger() const
+	{
+		return Trigger;
+	}
 
+protected:
 	UPROPERTY(VisibleAnywhere, Category=Box)
 	TObjectPtr<class UStaticMeshComponent> Mesh;
 

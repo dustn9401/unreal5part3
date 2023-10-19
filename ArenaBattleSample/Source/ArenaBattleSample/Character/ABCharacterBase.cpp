@@ -274,7 +274,7 @@ void AABCharacterBase::SetDead()
 {
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
 	PlayDeadAnimation();
-	SetActorEnableCollision(false);
+	SetActorEnableCollision(false);		// 시체가 걸리적거리지 않도록 설정
 }
 
 void AABCharacterBase::PlayDeadAnimation()
