@@ -47,28 +47,11 @@ void AABItemBox::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	// 에셋매니저로부터 데이터 로드
-	UAssetManager& AM = UAssetManager::Get();
-
-	TArray<FPrimaryAssetId> AssetIds;
-	AM.GetPrimaryAssetIdList(TEXT("ABItemData"), AssetIds);
-	ensure(AssetIds.Num() > 0);
-
-#if !UE_BUILD_SHIPPING
-	UE_LOG(LogTemp, Log, TEXT("ABItemData List:\n%s"), *[](TArray<FPrimaryAssetId> InAssetIds)
-	{
-		FString Res;
-		int32 Idx = 0;
-		for(auto AssetId : InAssetIds)
-		{
-			Res += FString::Printf(TEXT("#%d: %s\n"), Idx, *AssetId.ToString());
-			Idx++;
-		}
-		
-		return Res;
-	}(AssetIds));
-#endif
+	const UAssetManager& AM = UAssetManager::Get();
 	
-
+	TArray<FPrimaryAssetId> AssetIds;
+	ensure(AM.GetPrimaryAssetIdList(TEXT("ABItemData"), AssetIds));
+	
 	const int32 RIdx = FMath::RandRange(0, AssetIds.Num() - 1);
 	const FSoftObjectPtr AssetPtr(AM.GetPrimaryAssetPath(AssetIds[RIdx]));
 
