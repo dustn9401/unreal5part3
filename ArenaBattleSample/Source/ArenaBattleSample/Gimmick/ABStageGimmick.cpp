@@ -236,7 +236,8 @@ void AABStageGimmick::OnRewardTriggerBeginOverlap(UPrimitiveComponent* Overlappe
 		}
 	}
 	
-	UE_LOG(LogTemp, Log, TEXT("Boxes Destroyed, Num()=%d"), RewardBoxes.Num());	// 4, 직접 비워줘야 함
+	UE_LOG(LogTemp, Log, TEXT("Boxes Destroyed, Num()=%d"), RewardBoxes.Num());	// 4, 재사용을 위해서는 직접 비워줘야 함
+	RewardBoxes.Empty();
 	SetState(EStageState::Next);
 }
 
