@@ -241,7 +241,7 @@ void AABCharacterBase::AttackHitCheck()
 
 	const float AttackRange = 40.0f;
 	const float AttackRadius = 50.0f;
-	const float AttackDamage = 30.0f;
+	const float AttackDamage = 100.0f;
 	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
 	const FVector End = Start + GetActorForwardVector() * AttackRange;
 
@@ -275,6 +275,12 @@ void AABCharacterBase::SetDead()
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
 	PlayDeadAnimation();
 	SetActorEnableCollision(false);		// 시체가 걸리적거리지 않도록 설정
+	
+	// SetActorHiddenInGame(true);		// ok, 캐릭터 및 위젯 모두 숨겨짐
+	HpBar->SetHiddenInGame(true);	// ok
+	// HpBar->SetVisibleFlag(false);	// ok
+	// HpBar->SetVisibility(false);		// ok
+	// HpBar->SetActive(false);			// no, 틱만 끄는듯
 }
 
 void AABCharacterBase::PlayDeadAnimation()

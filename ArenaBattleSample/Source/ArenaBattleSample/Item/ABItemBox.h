@@ -15,6 +15,9 @@ public:
 	// Sets default values for this actor's properties
 	AABItemBox();
 
+	virtual void PostInitializeComponents() override;
+	
+
 protected:
 	UPROPERTY(EditAnywhere, Category=Item)
 	TObjectPtr<class UABItemData> ItemData;

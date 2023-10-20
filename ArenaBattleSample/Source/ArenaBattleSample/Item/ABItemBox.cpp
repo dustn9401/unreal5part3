@@ -3,7 +3,9 @@
 
 #include "Item/ABItemBox.h"
 
+#include "ABItemData.h"
 #include "Components/BoxComponent.h"
+#include "Engine/AssetManager.h"
 #include "Interface/ABCharacterItemInterface.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Physics/ABCollision.h"
@@ -38,6 +40,40 @@ AABItemBox::AABItemBox()
 		Effect->SetTemplate(EffectRef.Object);
 		Effect->bAutoActivate = false;
 	}
+}
+
+void AABItemBox::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	// 에셋매니저로부터 데이터 로드
+	UAssetManager& AM = UAssetManager::Get();
+
+	TArray<FPrimaryAssetId> AssetIds;
+	AM.GetPrimaryAssetIdList(TEXT("ABItemData"), AssetIds);
+	ensure(AssetIds.Num() > 0);
+
+#if !UE_BUILD_SHIPPING
+	UE_LOG(LogTemp, Log, TEXT("ABItemData List:\n%s"), *[](TArray<FPrimaryAssetId> InAssetIds)
+	{
+		FString Res;
+		int32 Idx = 0;
+		for(auto AssetId : InAssetIds)
+		{
+			Res += FString::Printf(TEXT("#%d: %s\n"), Idx, *AssetId.ToString());
+			Idx++;
+		}
+		
+		return Res;
+	}(AssetIds));
+#endif
+	
+
+	const int32 RIdx = FMath::RandRange(0, AssetIds.Num() - 1);
+	const FSoftObjectPtr AssetPtr(AM.GetPrimaryAssetPath(AssetIds[RIdx]));
+
+	UObject* LoadedAsset = AssetPtr.LoadSynchronous();
+	ItemData = CastChecked<UABItemData>(LoadedAsset);
 }
 
 void AABItemBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
