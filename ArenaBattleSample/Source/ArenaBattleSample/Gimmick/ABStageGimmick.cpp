@@ -163,6 +163,9 @@ void AABStageGimmick::SetReady()
 void AABStageGimmick::SetFight()
 {
 	UE_LOG(LogTemp, Log, TEXT("AABStageGimmick::SetFight"));
+
+	// StageTrigger는 여기서 NoCollision으로 변한 뒤 다시 활성화 되지 않는다. (한번 Fight가 일어난 스테이지에서는 다시 전투가 발생하면 안되니까)
+	// 그래서 Stage를 재사용 하려는 경우, 방문하지 않은 위치의 Stage 일 경우에만 다시 활성화 시켜주는 코드 추가가 필요함
 	StageTrigger->SetCollisionProfileName(TEXT("NoCollision"));
 	for(const auto GateTrigger : GateTriggers)
 	{
