@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "GameData/ABCharacterStat.h"
 #include "ABCharacterStatComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnHpZeroDelegate)
@@ -25,19 +26,27 @@ protected:
 public:
 	FOnHpZeroDelegate OnHpZero;
 	FOnHpChangedDelegate OnHpChanged;
-	
-	FORCEINLINE float GetMaxHp() {return MaxHp;}
-	FORCEINLINE float GetCurrentHp() {return CurrentHp;}
+
+	void SetLevelStat(int32 InNewLevel);
+	FORCEINLINE float GetCurrentLevel() const {return CurrentLevel;}
+	FORCEINLINE void SetModifierStat(const FABCharacterStat& InModifierStat) {ModifierStat = InModifierStat;}
+	FORCEINLINE FABCharacterStat GetTotalStat() const {return BaseStat + ModifierStat;}
+	FORCEINLINE float GetCurrentHp() const {return CurrentHp;}
 	float ApplyDamage(float InDamage);
 
 protected:
 	void SetHp(float NewHp);
-	
-	// VisibleInstanceOnly 배치된 캐릭터 마다 다른 값을 설정할수있게해줌
-	UPROPERTY(VisibleInstanceOnly, Category=Stat)
-	float MaxHp;
 
 	// Transient: 디스크에 저장하지 않음
 	UPROPERTY(Transient, VisibleInstanceOnly, Category=Stat)
 	float CurrentHp;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, Category=Stat)
+	float CurrentLevel;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, Category=Stat, meta=(AllowPrivateAccess="true"))
+	FABCharacterStat BaseStat;
+
+	UPROPERTY(Transient, VisibleInstanceOnly, Category=Stat, meta=(AllowPrivateAccess="true"))
+	FABCharacterStat ModifierStat;
 };
