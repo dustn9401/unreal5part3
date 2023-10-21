@@ -180,7 +180,7 @@ void AABCharacterBase::ComboActionBegin()
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
 
 	// 몽타주 실행
-	const float AttackSpeedRate = 1.0f;
+	const float AttackSpeedRate = Stat->GetTotalStat().AttackSpeed;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->Montage_Play(ComboActionMontage, AttackSpeedRate);
 
@@ -207,7 +207,7 @@ void AABCharacterBase::SetComboCheckTimerIfPossible()
 	int32 ComboIndex = CurrentCombo - 1;
 	ensure(ComboActionData->EffectiveFrameCount.IsValidIndex(ComboIndex));
 
-	const float AttackSpeedRate = 1.0f;
+	const float AttackSpeedRate = Stat->GetTotalStat().AttackSpeed;
 	float ComboEffectiveTime = (ComboActionData->EffectiveFrameCount[ComboIndex] / ComboActionData->FrameRate) / AttackSpeedRate;
 	if (ComboEffectiveTime > 0.0f)
 	{
@@ -239,9 +239,11 @@ void AABCharacterBase::AttackHitCheck()
 	FHitResult OutHitResult;
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
 
-	const float AttackRange = 40.0f;
+	const auto TotalStat = Stat->GetTotalStat();
+	const float AttackRange = TotalStat.AttackRange;
 	const float AttackRadius = 50.0f;
-	const float AttackDamage = 100.0f;
+	const float AttackDamage = TotalStat.Attack;
+	
 	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
 	const FVector End = Start + GetActorForwardVector() * AttackRange;
 
