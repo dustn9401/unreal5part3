@@ -44,4 +44,9 @@ public:
 
 		return Result;
 	}
+
+	FString ToString() const
+	{
+		return FString::Printf(TEXT("MaxHp: %f, Attack: %f, AttackRange: %f, AttackSpeed: %f, MovementSpeed: %f"), MaxHp, Attack, AttackRange, AttackSpeed, MovementSpeed);
+	}
 };
