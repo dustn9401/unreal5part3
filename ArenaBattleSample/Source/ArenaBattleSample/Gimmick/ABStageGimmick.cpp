@@ -233,6 +233,9 @@ void AABStageGimmick::OnOpponentSpawn()
 void AABStageGimmick::OnRewardTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult)
 {
+	// 이 함수 먼저 호출 후 ABItemBox::OnOverlapBegin() 이 호출되어야 함!!
+	UE_LOG(LogTemp, Log, TEXT("AABStageGimmick::OnRewardTriggerBeginOverlap"));
+	
 	for(const auto& RewardBox : RewardBoxes)
 	{
 		if (RewardBox.IsValid())
@@ -247,7 +250,6 @@ void AABStageGimmick::OnRewardTriggerBeginOverlap(UPrimitiveComponent* Overlappe
 		}
 	}
 	
-	UE_LOG(LogTemp, Log, TEXT("Boxes Destroyed, Num()=%d"), RewardBoxes.Num());	// 4, 재사용을 위해서는 직접 비워줘야 함
 	RewardBoxes.Empty();
 	SetState(EStageState::Next);
 }
@@ -256,14 +258,22 @@ void AABStageGimmick::SpawnRewardBoxes()
 {
 	for(const auto& Pair : RewardBoxLocations)
 	{
-		FVector WorldSpawnLocation = GetActorLocation() + Pair.Value + FVector::ZAxisVector * 30.0f;
-		AActor* BoxActor = GetWorld()->SpawnActor(RewardBoxClass, &WorldSpawnLocation, &FRotator::ZeroRotator);
-		AABItemBox* ItemBoxActor = Cast<AABItemBox>(BoxActor);
-		if (ItemBoxActor)
+		FTransform BoxTr(GetActorLocation() + Pair.Value + FVector::ZAxisVector * 30.0f);
+		AABItemBox* BoxActor = GetWorld()->SpawnActorDeferred<AABItemBox>(RewardBoxClass, BoxTr);
+		if (BoxActor)
 		{
-			ItemBoxActor->Tags.Add(Pair.Key);
-			ItemBoxActor->GetTrigger()->OnComponentBeginOverlap.AddDynamic(this, &AABStageGimmick::OnRewardTriggerBeginOverlap);
-			RewardBoxes.Add(ItemBoxActor);
+			BoxActor->Tags.Add(Pair.Key);
+			BoxActor->GetTrigger()->OnComponentBeginOverlap.AddDynamic(this, &AABStageGimmick::OnRewardTriggerBeginOverlap);
+			BoxActor->FinishSpawning(BoxTr);
+			RewardBoxes.Add(BoxActor);
+		}
+	}
+
+	for(const auto& RewardBox : RewardBoxes)
+	{
+		if (RewardBox.IsValid())
+		{
+			RewardBox.Get()->FinishSpawning(RewardBox.Get()->GetActorTransform());
 		}
 	}
 }
