@@ -118,10 +118,11 @@ void AABStageGimmick::OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedC
 
 	if (!bResult)
 	{
-		auto NewGimmick = GetWorld()->SpawnActor<AABStageGimmick>(NewLocation, FRotator::ZeroRotator);
-		if (NewGimmick)
+		const FTransform NewTr(NewLocation);
+		if (const auto NewGimmick = GetWorld()->SpawnActorDeferred<AABStageGimmick>(StaticClass(), NewTr))
 		{
 			NewGimmick->SetStageNum(CurrentStageNum + 1);
+			NewGimmick->FinishSpawning(NewTr);
 		}
 	}
 }
@@ -215,13 +216,17 @@ void AABStageGimmick::OnOpponentDestroyed(AActor* DestroyedActor)
 
 void AABStageGimmick::OnOpponentSpawn()
 {
-	const FVector SpawnLocation = GetActorLocation() + FVector::UpVector * 88.0f;
-	AActor* OpponentCharacter = GetWorld()->SpawnActor(OpponentClass, &SpawnLocation, &FRotator::ZeroRotator);
+	const FTransform SpawnTr = FTransform(GetActorLocation() + FVector::UpVector * 88.0f);
+
+	// SpawnActor를 사용하면 즉시 BeginPlay()함수가 호출되기 때문에, SetLevel함수 호출 후 초기화 코드를 또 호출해줘야함
+	// 그래서 BeginPlay 등의 액터 생성 이벤트 함수들이 자동으로 호출되지 않는  SpawnActorDeferred 라는 함수를 사용한다.
+	AActor* OpponentCharacter = GetWorld()->SpawnActorDeferred<AABCharacterNonPlayer>(OpponentClass, SpawnTr);
 	AABCharacterNonPlayer* ABOpponentCharacter = Cast<AABCharacterNonPlayer>(OpponentCharacter);
 	if (ABOpponentCharacter)
 	{
 		ABOpponentCharacter->OnDestroyed.AddDynamic(this, &AABStageGimmick::OnOpponentDestroyed);
 		ABOpponentCharacter->SetLevel(CurrentStageNum);	// 현재 스테이지 레벨로 적을 세팅한다.
+		ABOpponentCharacter->FinishSpawning(SpawnTr);	// SpawnActorDeferred 사용 시 반드시 호출해줘야함
 	}
 }
 
