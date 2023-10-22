@@ -27,8 +27,8 @@ public:
 	FOnHpZeroDelegate OnHpZero;
 	FOnHpChangedDelegate OnHpChanged;
 
-	void SetLevelStat(int32 InNewLevel);
-	FORCEINLINE float GetCurrentLevel() const {return CurrentLevel;}
+	void SetLevelStat(int32 InNewLevelNumber);
+	FORCEINLINE float GetCurrentLevel() const {return CurrentLevelNumber;}
 	FORCEINLINE void SetModifierStat(const FABCharacterStat& InModifierStat) {ModifierStat = InModifierStat;}
 	FORCEINLINE FABCharacterStat GetTotalStat() const {return BaseStat + ModifierStat;}
 	FORCEINLINE float GetCurrentHp() const {return CurrentHp;}
@@ -42,7 +42,7 @@ protected:
 	float CurrentHp;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, Category=Stat)
-	float CurrentLevel;
+	float CurrentLevelNumber;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, Category=Stat, meta=(AllowPrivateAccess="true"))
 	FABCharacterStat BaseStat;

@@ -6,7 +6,7 @@
 #include "GameData/ABGameSingleton.h"
 
 // Sets default values for this component's properties
-UABCharacterStatComponent::UABCharacterStatComponent(): CurrentHp(0), CurrentLevel(1)
+UABCharacterStatComponent::UABCharacterStatComponent(): CurrentHp(0), CurrentLevelNumber(1)
 {
 }
 
@@ -16,14 +16,14 @@ void UABCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetLevelStat(CurrentLevel);
+	SetLevelStat(CurrentLevelNumber);
 	SetHp(BaseStat.MaxHp);
 }
 
-void UABCharacterStatComponent::SetLevelStat(int32 InNewLevel)
+void UABCharacterStatComponent::SetLevelStat(int32 InNewLevelNumber)
 {
-	CurrentLevel = FMath::Clamp(InNewLevel, 1, UABGameSingleton::Get().CharacterMaxLevel);
-	BaseStat = UABGameSingleton::Get().GetCharacterStatTable(CurrentLevel);
+	CurrentLevelNumber = FMath::Clamp(InNewLevelNumber, 1, UABGameSingleton::Get().CharacterMaxLevel);
+	BaseStat = UABGameSingleton::Get().GetCharacterStatTable(CurrentLevelNumber - 1);
 	check(BaseStat.MaxHp > 0.0f);
 }
 

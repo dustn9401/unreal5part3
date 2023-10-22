@@ -8,6 +8,7 @@
 #include "Interface/ABCharacterItemInterface.h"
 #include "Interface/ABCharacterWidgetInterface.h"
 #include "functional"
+#include "CharacterStat/ABCharacterStatComponent.h"
 #include "ABCharacterBase.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogABCharacter, Log, All);
@@ -109,4 +110,9 @@ protected:
 	virtual void DrinkPotion(class UABItemData* InItemData);
 	virtual void EquipWeapon(class UABItemData* InItemData);
 	virtual void ReadScroll(class UABItemData* InItemData);
+
+// Stat Section
+public:
+	int32 GetLevel() const;
+	void SetLevel(int32 InNewLevel) const;
 };

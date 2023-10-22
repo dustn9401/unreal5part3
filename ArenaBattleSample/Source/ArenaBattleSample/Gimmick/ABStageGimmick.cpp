@@ -56,6 +56,7 @@ AABStageGimmick::AABStageGimmick()
 	}
 
 	// State Section
+	CurrentStageNum = 0;
 	CurrentState = EStageState::Ready;
 	
 	StateChangeActions.Add(EStageState::Ready, FStageChangedDelegateWrapper(FOnStageChangedDelegate::CreateUObject(this, &AABStageGimmick::SetReady)));
@@ -117,7 +118,11 @@ void AABStageGimmick::OnGateTriggerBeginOverlap(UPrimitiveComponent* OverlappedC
 
 	if (!bResult)
 	{
-		GetWorld()->SpawnActor<AABStageGimmick>(NewLocation, FRotator::ZeroRotator);
+		auto NewGimmick = GetWorld()->SpawnActor<AABStageGimmick>(NewLocation, FRotator::ZeroRotator);
+		if (NewGimmick)
+		{
+			NewGimmick->SetStageNum(CurrentStageNum + 1);
+		}
 	}
 }
 
@@ -216,6 +221,7 @@ void AABStageGimmick::OnOpponentSpawn()
 	if (ABOpponentCharacter)
 	{
 		ABOpponentCharacter->OnDestroyed.AddDynamic(this, &AABStageGimmick::OnOpponentDestroyed);
+		ABOpponentCharacter->SetLevel(CurrentStageNum);	// 현재 스테이지 레벨로 적을 세팅한다.
 	}
 }
 

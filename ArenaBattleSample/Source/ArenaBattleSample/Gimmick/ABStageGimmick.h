@@ -105,4 +105,20 @@ protected:
 	void OnRewardTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepHitResult);
 
 	void SpawnRewardBoxes();
+
+// Stage Stat
+protected:
+	UPROPERTY(VisibleInstanceOnly, Category=Stat, meta=(AllowPrivateAccess="true"))
+	int32 CurrentStageNum;	// 0에서 시작, 첫번째 방 진입 시 1
+	
+public:
+	int32 GetStageNum() const
+	{
+		return CurrentStageNum;
+	}
+
+	void SetStageNum(const int32 NewStageNum)
+	{
+		this->CurrentStageNum = NewStageNum;
+	}
 };
