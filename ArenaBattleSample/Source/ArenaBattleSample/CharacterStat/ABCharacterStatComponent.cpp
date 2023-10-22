@@ -23,7 +23,7 @@ void UABCharacterStatComponent::BeginPlay()
 void UABCharacterStatComponent::SetLevelStat(int32 InNewLevelNumber)
 {
 	CurrentLevelNumber = FMath::Clamp(InNewLevelNumber, 1, UABGameSingleton::Get().CharacterMaxLevel);
-	BaseStat = UABGameSingleton::Get().GetCharacterStatTable(CurrentLevelNumber - 1);
+	BaseStat = UABGameSingleton::Get().GetCharacterStatTable(CurrentLevelNumber);
 	check(BaseStat.MaxHp > 0.0f);
 }
 

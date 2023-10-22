@@ -31,10 +31,10 @@ public:
 	UPROPERTY()
 	int32 CharacterMaxLevel;
 	
-	FORCEINLINE FABCharacterStat GetCharacterStatTable(int32 InLevelIndex) const
+	FORCEINLINE FABCharacterStat GetCharacterStatTable(int32 InLevelNumber) const
 	{
-		return CharacterStatTable.IsValidIndex(InLevelIndex)
-		? CharacterStatTable[InLevelIndex]
+		return CharacterStatTable.IsValidIndex(InLevelNumber - 1)
+		? CharacterStatTable[InLevelNumber - 1]
 		: FABCharacterStat();
 	}
 };
