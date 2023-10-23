@@ -90,6 +90,9 @@ protected:
 
 	FTimerHandle OpponentTimerHandle;
 	void OnOpponentSpawn();
+	
+	TArray<FVector> OpponentSpawnLocations;
+	int32 CurrentOpponentCount;
 
 // Reward Section
 protected:

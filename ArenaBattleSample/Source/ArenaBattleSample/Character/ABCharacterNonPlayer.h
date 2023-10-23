@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Character/ABCharacterBase.h"
+#include "Engine/StreamableManager.h"
 #include "ABCharacterNonPlayer.generated.h"
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Config=ArenaBattle)
 class ARENABATTLESAMPLE_API AABCharacterNonPlayer : public AABCharacterBase
 {
 	GENERATED_BODY()
@@ -18,5 +19,20 @@ public:
 	AABCharacterNonPlayer();
 
 protected:
+	virtual void PostInitializeComponents() override;
+
+protected:
 	virtual void SetDead() override;
+	
+	void NPCMeshLoadCompleted();
+
+	// 이 방식은 블루프린트를 생성해 추가하거나, 코드로 배열을 채워줘야 함
+	// UPROPERTY()
+	// TArray<TSoftObjectPtr<USkeletalMesh>> NPCMeshes;
+
+	// 대신에 이렇게 하면 텍스트 파일로 배열값을 관리할 수 있음
+	UPROPERTY(Config)
+	TArray<FSoftObjectPath> NPCMeshes;
+
+	TSharedPtr<FStreamableHandle> NPCMeshHandle;	// 메쉬 비동기 로드용 변수
 };

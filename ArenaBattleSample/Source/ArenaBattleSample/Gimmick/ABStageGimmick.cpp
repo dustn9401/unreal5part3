@@ -68,6 +68,34 @@ AABStageGimmick::AABStageGimmick()
 	OpponentSpawnTime = 2.0f;
 	OpponentClass = AABCharacterNonPlayer::StaticClass();
 
+	// square
+	int w = 1, h = 10;
+	float space = 100.0f;
+	float xs = -w * .5f * space;
+	float ys = -h * .5f * space;
+	for(int i=0;i<w;i++)
+	{
+		for(int j=0;j<h;j++)
+		{
+			OpponentSpawnLocations.Add(FVector(xs + i * space, ys + j * space, 0.0f));
+		}
+	}
+
+	// spiral
+	// double a = 0.0;
+	// double b = 50;
+	// int NumPoints = 100;
+	// for(int i=0;i<=NumPoints;i++)
+	// {
+	// 	double Theta = 0.2 * i;
+	// 	double r = a + b * Theta;
+	// 	double x = r * FMath::Cos(Theta);
+	// 	double y = r * FMath::Sin(Theta);
+	// 	OpponentSpawnLocations.Add(FVector(x, y, 0));
+	// 
+
+	CurrentOpponentCount = 0;
+
 	// RewardSection
 	RewardBoxClass = AABItemBox::StaticClass();
 	for(FName GateSocket : GateSockets)
@@ -211,22 +239,32 @@ void AABStageGimmick::SetChooseNext()
 
 void AABStageGimmick::OnOpponentDestroyed(AActor* DestroyedActor)
 {
-	SetState(EStageState::Reward);
+	CurrentOpponentCount--;
+	ensure(CurrentOpponentCount >= 0);
+	
+	if (CurrentOpponentCount == 0)
+	{
+		SetState(EStageState::Reward);
+	}
 }
 
 void AABStageGimmick::OnOpponentSpawn()
 {
-	const FTransform SpawnTr = FTransform(GetActorLocation() + FVector::UpVector * 88.0f);
-
-	// SpawnActor를 사용하면 즉시 BeginPlay()함수가 호출되기 때문에, SetLevel함수 호출 후 초기화 코드를 또 호출해줘야함
-	// 그래서 BeginPlay 등의 액터 생성 이벤트 함수들이 자동으로 호출되지 않는  SpawnActorDeferred 라는 함수를 사용한다.
-	AActor* OpponentCharacter = GetWorld()->SpawnActorDeferred<AABCharacterNonPlayer>(OpponentClass, SpawnTr);
-	AABCharacterNonPlayer* ABOpponentCharacter = Cast<AABCharacterNonPlayer>(OpponentCharacter);
-	if (ABOpponentCharacter)
+	for(auto SpawnLoc : OpponentSpawnLocations)
 	{
-		ABOpponentCharacter->OnDestroyed.AddDynamic(this, &AABStageGimmick::OnOpponentDestroyed);
-		ABOpponentCharacter->SetLevel(CurrentStageNum);	// 현재 스테이지 레벨로 적을 세팅한다.
-		ABOpponentCharacter->FinishSpawning(SpawnTr);	// SpawnActorDeferred 사용 시 반드시 호출해줘야함
+		const FTransform SpawnTr = FTransform(GetActorLocation() + SpawnLoc + FVector::UpVector * 88.0f);
+
+		// SpawnActor를 사용하면 즉시 BeginPlay()함수가 호출되기 때문에, SetLevel함수 호출 후 초기화 코드를 또 호출해줘야함
+		// 그래서 BeginPlay 등의 액터 생성 이벤트 함수들이 자동으로 호출되지 않는  SpawnActorDeferred 라는 함수를 사용한다.
+		AActor* OpponentCharacter = GetWorld()->SpawnActorDeferred<AABCharacterNonPlayer>(OpponentClass, SpawnTr, nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		AABCharacterNonPlayer* ABOpponentCharacter = Cast<AABCharacterNonPlayer>(OpponentCharacter);
+		if (ABOpponentCharacter)
+		{
+			CurrentOpponentCount++;
+			ABOpponentCharacter->OnDestroyed.AddDynamic(this, &AABStageGimmick::OnOpponentDestroyed);
+			ABOpponentCharacter->SetLevel(CurrentStageNum);	// 현재 스테이지 레벨로 적을 세팅한다.
+			ABOpponentCharacter->FinishSpawning(SpawnTr);	// SpawnActorDeferred 사용 시 반드시 호출해줘야함
+		}
 	}
 }
 
@@ -264,7 +302,6 @@ void AABStageGimmick::SpawnRewardBoxes()
 		{
 			BoxActor->Tags.Add(Pair.Key);
 			BoxActor->GetTrigger()->OnComponentBeginOverlap.AddDynamic(this, &AABStageGimmick::OnRewardTriggerBeginOverlap);
-			BoxActor->FinishSpawning(BoxTr);
 			RewardBoxes.Add(BoxActor);
 		}
 	}
