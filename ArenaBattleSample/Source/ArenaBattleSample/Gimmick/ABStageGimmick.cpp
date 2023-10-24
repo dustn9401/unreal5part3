@@ -69,7 +69,7 @@ AABStageGimmick::AABStageGimmick()
 	OpponentClass = AABCharacterNonPlayer::StaticClass();
 
 	// square
-	int w = 1, h = 1;
+	int w = 1, h = 10;
 	float space = 100.0f;
 	float xs = -w * .5f * space;
 	float ys = -h * .5f * space;
@@ -288,7 +288,6 @@ void AABStageGimmick::OnRewardTriggerBeginOverlap(UPrimitiveComponent* Overlappe
 		}
 	}
 	
-	RewardBoxes.Empty();
 	SetState(EStageState::Next);
 }
 
@@ -301,7 +300,10 @@ void AABStageGimmick::SpawnRewardBoxes()
 		if (BoxActor)
 		{
 			BoxActor->Tags.Add(Pair.Key);
+			
+			// 캐릭터가 미리 상자 위치에 서있는 경우 주의할것. 아래에서 FinishSpawning함수가 호출됨과 동시에 OnComponentBeginOverlap이 트리거됨
 			BoxActor->GetTrigger()->OnComponentBeginOverlap.AddDynamic(this, &AABStageGimmick::OnRewardTriggerBeginOverlap);
+			
 			RewardBoxes.Add(BoxActor);
 		}
 	}
