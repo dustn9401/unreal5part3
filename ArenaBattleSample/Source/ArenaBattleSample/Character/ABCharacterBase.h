@@ -63,6 +63,7 @@ protected:
 	void ProcessComboCommand();
 	void ComboActionBegin();
 	void ComboActionEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded);
+	virtual void NotifyComboActionEnd();
 	void SetComboCheckTimerIfPossible();	// 다음 콤보가 있는 경우 타이머를 등록해주는 함수
 	void ComboCheck();
 

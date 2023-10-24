@@ -43,4 +43,12 @@ public:
 	virtual float GetAIDetectRange() override;
 	virtual float GetAIAttackRange() override;
 	virtual float GetAITurnSpeed() override;
+
+	FAICharacterAttackFinished OnAttackFinished;
+	virtual void AttackByAI() override;
+	virtual void SetAIAttackDelegate(const FAICharacterAttackFinished& InOnAttackFinished) override;
+
+// AABCharacterBase override
+protected:
+	virtual void NotifyComboActionEnd() override;
 };

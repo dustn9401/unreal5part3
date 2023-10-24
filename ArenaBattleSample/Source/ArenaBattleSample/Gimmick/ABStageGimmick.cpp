@@ -69,7 +69,7 @@ AABStageGimmick::AABStageGimmick()
 	OpponentClass = AABCharacterNonPlayer::StaticClass();
 
 	// square
-	int w = 1, h = 10;
+	int w = 1, h = 1;
 	float space = 100.0f;
 	float xs = -w * .5f * space;
 	float ys = -h * .5f * space;

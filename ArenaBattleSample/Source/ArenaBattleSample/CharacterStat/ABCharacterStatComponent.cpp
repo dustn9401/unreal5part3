@@ -6,7 +6,7 @@
 #include "GameData/ABGameSingleton.h"
 
 // Sets default values for this component's properties
-UABCharacterStatComponent::UABCharacterStatComponent(): CurrentHp(0), CurrentLevelNumber(1)
+UABCharacterStatComponent::UABCharacterStatComponent(): CurrentHp(0), CurrentLevelNumber(1), AttackRadius(50.0f)
 {
 }
 

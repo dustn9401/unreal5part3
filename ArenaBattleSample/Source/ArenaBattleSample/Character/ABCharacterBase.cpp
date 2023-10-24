@@ -163,11 +163,6 @@ void AABCharacterBase::ProcessComboCommand()
 	{
 		HasNextComboCommand = true;
 	}
-	else
-	{
-		// 필요 없는 코드인듯
-		// HasNextComboCommand = false;
-	}
 }
 
 void AABCharacterBase::ComboActionBegin()
@@ -197,9 +192,14 @@ void AABCharacterBase::ComboActionEnd(UAnimMontage* TargetMontage, bool IsProper
 {
 	ensure(CurrentCombo != 0);
 	CurrentCombo = 0;
-
-	UE_LOG(LogTemp, Log, TEXT("Finish ComboAction, GetMovementName(): %s"), *GetCharacterMovement()->GetMovementName())
+	
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+
+	NotifyComboActionEnd();
+}
+
+void AABCharacterBase::NotifyComboActionEnd()
+{
 }
 
 void AABCharacterBase::SetComboCheckTimerIfPossible()
@@ -241,7 +241,7 @@ void AABCharacterBase::AttackHitCheck()
 
 	const auto TotalStat = Stat->GetTotalStat();
 	const float AttackRange = TotalStat.AttackRange;
-	const float AttackRadius = 50.0f;
+	const float AttackRadius = Stat->GetAttackRadius();
 	const float AttackDamage = TotalStat.Attack;
 	
 	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
