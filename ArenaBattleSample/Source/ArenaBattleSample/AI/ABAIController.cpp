@@ -3,9 +3,11 @@
 
 #include "AI/ABAIController.h"
 
+#include "ABAI.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 AABAIController::AABAIController()
 {
@@ -27,6 +29,9 @@ void AABAIController::RunAI()
 	// 사용할 블랙보드 지정 및 행동트리 실행
 	if (auto BlackboardPtr = Blackboard.Get(); UseBlackboard(BBAsset, BlackboardPtr))
 	{
+		// HomePos를 폰의 생성 위치로 지정
+		Blackboard->SetValueAsVector(BBKEY_HOMEPOS, GetPawn()->GetActorLocation());
+		
 		const bool RunResult = RunBehaviorTree(BTAsset);
 		ensure(RunResult);
 	}
