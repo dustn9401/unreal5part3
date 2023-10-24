@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "Character/ABCharacterBase.h"
 #include "Engine/StreamableManager.h"
+#include "Interface/ABCharacterAIInterface.h"
 #include "ABCharacterNonPlayer.generated.h"
 
 /**
  * 
  */
 UCLASS(Config=ArenaBattle)
-class ARENABATTLESAMPLE_API AABCharacterNonPlayer : public AABCharacterBase
+class ARENABATTLESAMPLE_API AABCharacterNonPlayer : public AABCharacterBase, IABCharacterAIInterface
 {
 	GENERATED_BODY()
 
@@ -35,4 +36,11 @@ protected:
 	TArray<FSoftObjectPath> NPCMeshes;
 
 	TSharedPtr<FStreamableHandle> NPCMeshHandle;	// 메쉬 비동기 로드용 변수
+
+// IABCharacterAIInterface impl
+public:
+	virtual float GetAIPatrolRadius() override;
+	virtual float GetAIDetectRange() override;
+	virtual float GetAIAttackRange() override;
+	virtual float GetAITurnSpeed() override;
 };

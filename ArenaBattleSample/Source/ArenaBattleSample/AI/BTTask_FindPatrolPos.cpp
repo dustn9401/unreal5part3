@@ -7,6 +7,7 @@
 #include "AIController.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Interface/ABCharacterAIInterface.h"
 
 UBTTask_FindPatrolPos::UBTTask_FindPatrolPos()
 {
@@ -16,23 +17,28 @@ EBTNodeResult::Type UBTTask_FindPatrolPos::ExecuteTask(UBehaviorTreeComponent& O
 {
 	auto Unused = Super::ExecuteTask(OwnerComp, NodeMemory);
 	
-	const APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
+	APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
 	if (!ControllingPawn)
 	{
 		return EBTNodeResult::Failed;
 	}
 
-	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(ControllingPawn->GetWorld());
+	IABCharacterAIInterface* AICharacter = Cast<IABCharacterAIInterface>(ControllingPawn);
+	if (!AICharacter)
+	{
+		return EBTNodeResult::Failed;
+	}
+
+	const UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetNavigationSystem(ControllingPawn->GetWorld());
 	if (!NavSystem)
 	{
 		return EBTNodeResult::Failed;
 	}
-	
-	FVector Origin = OwnerComp.GetBlackboardComponent()->GetValueAsVector(BBKEY_HOMEPOS);
-	FNavLocation NextPatrolPos;
-	if (NavSystem->GetRandomPointInNavigableRadius(Origin, 500.0f, NextPatrolPos))
+
+	const FVector Origin = OwnerComp.GetBlackboardComponent()->GetValueAsVector(BBKEY_HOMEPOS);	// 스폰 위치
+	const float PatrolRadius = AICharacter->GetAIPatrolRadius();	// 정찰범위
+	if (FNavLocation NextPatrolPos; NavSystem->GetRandomPointInNavigableRadius(Origin, PatrolRadius, NextPatrolPos))
 	{
-		// 다음 정찰 위치 세팅
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector(BBKEY_PATROLPOS, NextPatrolPos.Location);
 		return EBTNodeResult::Succeeded;
 	}
