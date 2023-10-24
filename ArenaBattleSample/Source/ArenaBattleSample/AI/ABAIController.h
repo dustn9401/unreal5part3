@@ -13,5 +13,20 @@ UCLASS()
 class ARENABATTLESAMPLE_API AABAIController : public AAIController
 {
 	GENERATED_BODY()
-	
+
+public:
+	AABAIController();
+
+	void RunAI();
+	void StopAI();
+
+protected:
+	virtual void OnPossess(APawn* InPawn) override;
+
+private:
+	UPROPERTY()
+	TObjectPtr<UBlackboardData> BBAsset;
+
+	UPROPERTY()
+	TObjectPtr<UBehaviorTree> BTAsset;
 };
