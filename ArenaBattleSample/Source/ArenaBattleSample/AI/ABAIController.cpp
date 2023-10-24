@@ -3,6 +3,8 @@
 
 #include "AI/ABAIController.h"
 
+#include "BehaviorTree/BlackboardData.h"
+#include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 
 AABAIController::AABAIController()
