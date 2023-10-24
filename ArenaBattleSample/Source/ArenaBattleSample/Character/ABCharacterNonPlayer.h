@@ -12,7 +12,7 @@
  * 
  */
 UCLASS(Config=ArenaBattle)
-class ARENABATTLESAMPLE_API AABCharacterNonPlayer : public AABCharacterBase, IABCharacterAIInterface
+class ARENABATTLESAMPLE_API AABCharacterNonPlayer : public AABCharacterBase, public IABCharacterAIInterface
 {
 	GENERATED_BODY()
 

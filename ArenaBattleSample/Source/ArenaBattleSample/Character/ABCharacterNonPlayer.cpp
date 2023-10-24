@@ -55,20 +55,20 @@ void AABCharacterNonPlayer::NPCMeshLoadCompleted()
 
 float AABCharacterNonPlayer::GetAIPatrolRadius()
 {
-	throw "this function is not implemented";
+	return 800.0f;
 }
 
 float AABCharacterNonPlayer::GetAIDetectRange()
 {
-	throw "this function is not implemented";
+	return 400.0f;
 }
 
 float AABCharacterNonPlayer::GetAIAttackRange()
 {
-	throw "this function is not implemented";
+	return 0.0f;
 }
 
 float AABCharacterNonPlayer::GetAITurnSpeed()
 {
-	throw "this function is not implemented";
+	return 0.0f;
 }
