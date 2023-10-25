@@ -302,7 +302,8 @@ void AABStageGimmick::SpawnRewardBoxes()
 			BoxActor->Tags.Add(Pair.Key);
 			
 			// 캐릭터가 미리 상자 위치에 서있는 경우 주의할것. 아래에서 FinishSpawning함수가 호출됨과 동시에 OnComponentBeginOverlap이 트리거됨
-			BoxActor->GetTrigger()->OnComponentBeginOverlap.AddDynamic(this, &AABStageGimmick::OnRewardTriggerBeginOverlap);
+			BoxActor->GetTrigger()->OnComponentBeginOverlap
+				.AddDynamic(this, &AABStageGimmick::OnRewardTriggerBeginOverlap);
 			
 			RewardBoxes.Add(BoxActor);
 		}
@@ -313,6 +314,10 @@ void AABStageGimmick::SpawnRewardBoxes()
 		if (RewardBox.IsValid())
 		{
 			RewardBox.Get()->FinishSpawning(RewardBox.Get()->GetActorTransform());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Log, TEXT("RewardBox.IsValid == false"));
 		}
 	}
 }

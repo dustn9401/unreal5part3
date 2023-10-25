@@ -77,6 +77,7 @@ protected:
 protected:
 	virtual void AttackHitCheck() override;
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual bool CanHit(const FHitResult& HitResult);	// Sweep 또는 Trace로 충돌 판정이 발생했을 때, 데미지를 입을 수 있는지 여부 반환 (동맹 조건 등 체크)
 	
 // Dead
 protected:

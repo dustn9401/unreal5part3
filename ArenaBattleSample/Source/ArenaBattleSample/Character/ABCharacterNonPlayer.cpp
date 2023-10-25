@@ -5,6 +5,8 @@
 
 #include "AI/ABAIController.h"
 #include "Engine/AssetManager.h"
+#include "Physics/ABCollision.h"
+#include "Player/ABCharacterPlayer.h"
 
 AABCharacterNonPlayer::AABCharacterNonPlayer()
 {
@@ -89,4 +91,10 @@ void AABCharacterNonPlayer::NotifyComboActionEnd()
 	
 	// ReSharper disable once CppExpressionWithoutSideEffects
 	OnAttackFinished.ExecuteIfBound();
+}
+
+bool AABCharacterNonPlayer::CanHit(const FHitResult& HitResult)
+{
+	AABCharacterPlayer* PlayerCharacter = Cast<AABCharacterPlayer>(HitResult.GetActor());
+	return PlayerCharacter != nullptr;	// 플레이어 캐릭터만 공격 가능하다.
 }

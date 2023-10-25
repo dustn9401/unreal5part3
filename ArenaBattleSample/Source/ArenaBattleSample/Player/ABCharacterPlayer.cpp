@@ -9,6 +9,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Character/ABCharacterControlData.h"
+#include "Character/ABCharacterNonPlayer.h"
+#include "Physics/ABCollision.h"
 
 AABCharacterPlayer::AABCharacterPlayer()
 {
@@ -74,6 +76,8 @@ void AABCharacterPlayer::BeginPlay()
 
 	if (!InputEnabled())
 		EnableInput(CastChecked<APlayerController>(GetController()));
+
+	SetCanBeDamaged(false);
 }
 
 void AABCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -172,6 +176,12 @@ void AABCharacterPlayer::QuarterMove(const FInputActionValue& Value)
 void AABCharacterPlayer::Attack()
 {
 	ProcessComboCommand();
+}
+
+bool AABCharacterPlayer::CanHit(const FHitResult& HitResult)
+{
+	AABCharacterNonPlayer* NonPlayerCharacter = Cast<AABCharacterNonPlayer>(HitResult.GetActor());
+	return NonPlayerCharacter != nullptr;	// 플레이어가 아닌 캐릭터만 공격 가능
 }
 
 void AABCharacterPlayer::SetDead()

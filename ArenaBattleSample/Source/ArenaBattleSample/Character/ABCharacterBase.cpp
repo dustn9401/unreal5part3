@@ -236,7 +236,7 @@ void AABCharacterBase::ComboCheck()
 
 void AABCharacterBase::AttackHitCheck()
 {
-	FHitResult OutHitResult;
+	TArray<FHitResult> OutHitResults;
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
 
 	const auto TotalStat = Stat->GetTotalStat();
@@ -247,11 +247,17 @@ void AABCharacterBase::AttackHitCheck()
 	const FVector Start = GetActorLocation() + GetActorForwardVector() * GetCapsuleComponent()->GetScaledCapsuleRadius();
 	const FVector End = Start + GetActorForwardVector() * AttackRange;
 
-	bool HitDetected = GetWorld()-> SweepSingleByChannel(OutHitResult, Start, End, FQuat::Identity, CCHANNEL_ABACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
+	bool HitDetected = GetWorld()-> SweepMultiByChannel(OutHitResults, Start, End, FQuat::Identity, CCHANNEL_ABACTION, FCollisionShape::MakeSphere(AttackRadius), Params);
 	if (HitDetected)
 	{
-		FDamageEvent DamageEvent;
-		OutHitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
+		for(const auto& HitResult : OutHitResults)
+		{
+			if (!HitResult.GetActor()->CanBeDamaged()) continue;
+			if (!CanHit(HitResult)) continue;
+			
+			FDamageEvent DamageEvent;
+			HitResult.GetActor()->TakeDamage(AttackDamage, DamageEvent, GetController(), this);
+		}
 	}
 
 #if ENABLE_DRAW_DEBUG
@@ -270,6 +276,11 @@ float AABCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	Stat->ApplyDamage(DamageAmount);
 	
 	return DamageAmount;
+}
+
+bool AABCharacterBase::CanHit(const FHitResult& HitResult)
+{
+	return true;
 }
 
 void AABCharacterBase::SetDead()

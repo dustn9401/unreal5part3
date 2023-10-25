@@ -51,4 +51,6 @@ public:
 // AABCharacterBase override
 protected:
 	virtual void NotifyComboActionEnd() override;
+	
+	virtual bool CanHit(const FHitResult& HitResult) override;
 };
