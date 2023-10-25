@@ -8,14 +8,14 @@
 // Sets default values for this component's properties
 UABCharacterStatComponent::UABCharacterStatComponent(): CurrentHp(0), CurrentLevelNumber(1), AttackRadius(50.0f)
 {
+	bWantsInitializeComponent = true;
 }
 
-
-// Called when the game starts
-void UABCharacterStatComponent::BeginPlay()
+void UABCharacterStatComponent::InitializeComponent()
 {
-	Super::BeginPlay();
+	Super::InitializeComponent();
 
+	// 위젯, HUD 생성보다 먼저 호출되어야 함
 	SetLevelStat(CurrentLevelNumber);
 	SetHp(BaseStat.MaxHp);
 }
