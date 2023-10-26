@@ -22,6 +22,7 @@ void AABPlayerController::BeginPlay()
 	const FInputModeGameOnly GameOnlyInputMode;
 	SetInputMode(GameOnlyInputMode);
 
+	// HUD 위젯(Overlay UI)은 컴포넌트가 따로 없고, 이렇게 초기화 해서 사용
 	HUDWidget = CreateWidget<UABHUDWidget>(this, HUDWidgetClass);
 	if (HUDWidget)
 	{

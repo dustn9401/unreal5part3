@@ -8,6 +8,7 @@
 
 /**
  * 위젯 초기화 관련 편의성을 위한 클래스
+ * 반드시 ABUserWidget과 함께 사용할 것
  */
 UCLASS()
 class ARENABATTLESAMPLE_API UABWidgetComponent : public UWidgetComponent

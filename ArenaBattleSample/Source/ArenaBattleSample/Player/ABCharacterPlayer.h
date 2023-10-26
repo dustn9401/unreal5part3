@@ -5,13 +5,14 @@
 #include "CoreMinimal.h"
 #include "Character/ABCharacterBase.h"
 #include "InputActionValue.h"
+#include "Interface/ABCharacterHUDInterface.h"
 #include "ABCharacterPlayer.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARENABATTLESAMPLE_API AABCharacterPlayer : public AABCharacterBase
+class ARENABATTLESAMPLE_API AABCharacterPlayer : public AABCharacterBase, public IABCharacterHUDInterface
 {
 	GENERATED_BODY()
 
@@ -74,4 +75,8 @@ protected:
 	virtual bool CanHit(const FHitResult& HitResult) override;
 
 	virtual void SetDead() override;
+
+// IABCharacterHUDInterface Impl
+protected:
+	virtual void SetupHUDWidget(class UABHUDWidget* InHUDWidget) override;
 };

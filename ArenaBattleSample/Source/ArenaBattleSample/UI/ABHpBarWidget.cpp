@@ -17,9 +17,8 @@ void UABHpBarWidget::NativeConstruct()
 
 	HpProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("PbHpBar")));
 	ensure(HpProgressBar);
-
-	auto CharacterWidget = Cast<IABCharacterWidgetInterface>(OwningActor);
-	if (CharacterWidget)
+	
+	if (IABCharacterWidgetInterface* CharacterWidget = Cast<IABCharacterWidgetInterface>(OwningActor))
 	{
 		CharacterWidget->SetCharacterWidget(this);
 	}

@@ -11,6 +11,8 @@
 #include "Character/ABCharacterControlData.h"
 #include "Character/ABCharacterNonPlayer.h"
 #include "Physics/ABCollision.h"
+#include "UI/ABHpBarWidget.h"
+#include "UI/ABHUDWidget.h"
 
 AABCharacterPlayer::AABCharacterPlayer()
 {
@@ -190,6 +192,21 @@ void AABCharacterPlayer::SetDead()
 
 	if (InputEnabled())
 		DisableInput(CastChecked<APlayerController>(GetController()));
+}
+
+void AABCharacterPlayer::SetupHUDWidget(UABHUDWidget* InHUDWidget)
+{
+	if (InHUDWidget)
+	{
+		// 순서 중요: Stat 초기화 할 때 MaxHp값이 세팅되기 때문에, HpBar 초기화보다 먼저 호출해야함
+		InHUDWidget->UpdateStat(Stat->GetBaseStat(), Stat->GetModifierStat());
+		Stat->OnStatChanged.AddUObject(InHUDWidget, &UABHUDWidget::UpdateStat);
+		
+		// HUD의 HpBar는 캐릭터와 무관하기 때문에, NativeConstruct() 에서 AABCharacterBase::SetCharacterWidget() 가 호출되지 않음
+		// 그래서 여기서 딜리게이트를 등록해줘야 함
+		InHUDWidget->UpdateHpBar(Stat->GetCurrentHp());
+		Stat->OnHpChanged.AddUObject(InHUDWidget, &UABHUDWidget::UpdateHpBar);
+	}
 }
 
 void AABCharacterPlayer::SetCharacterControlData(const UABCharacterControlData* CharacterControlData)
