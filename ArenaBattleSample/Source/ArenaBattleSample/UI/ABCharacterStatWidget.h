@@ -1,4 +1,4 @@
- // Fill out your copyright notice in the Description page of Project Settings.
+	// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -8,13 +8,23 @@
 #include "ABCharacterStatWidget.generated.h"
 
 /**
- * 
- */
+* 
+*/
 UCLASS()
 class ARENABATTLESAMPLE_API UABCharacterStatWidget : public UUserWidget
 {
- GENERATED_BODY()
+	GENERATED_BODY()
+
+protected:
+	virtual void NativeConstruct() override;
 
 public:
- void UpdateStat(const FABCharacterStat& BaseStat, const FABCharacterStat& ModifierStat);
+	void UpdateStat(const FABCharacterStat& BaseStat, const FABCharacterStat& ModifierStat);
+
+private:
+	UPROPERTY()
+	TMap<FName, TObjectPtr<class UTextBlock>> BaseLookup;
+
+	UPROPERTY()
+	TMap<FName, TObjectPtr<class UTextBlock>> ModifierLookup; 
 };
