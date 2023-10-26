@@ -77,7 +77,9 @@ void AABCharacterPlayer::BeginPlay()
 	SetCharacterControl(CurrentCharacterControlType);
 
 	if (!InputEnabled())
+	{
 		EnableInput(CastChecked<APlayerController>(GetController()));
+	}
 
 	// SetCanBeDamaged(false);
 }
@@ -191,7 +193,11 @@ void AABCharacterPlayer::SetDead()
 	Super::SetDead();
 
 	if (InputEnabled())
+	{
 		DisableInput(CastChecked<APlayerController>(GetController()));
+	}
+
+	
 }
 
 void AABCharacterPlayer::SetupHUDWidget(UABHUDWidget* InHUDWidget)

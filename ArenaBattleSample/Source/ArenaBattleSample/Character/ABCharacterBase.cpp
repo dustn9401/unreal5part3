@@ -134,6 +134,7 @@ void AABCharacterBase::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	Stat->OnHpZero.AddUObject(this, &AABCharacterBase::SetDead);
+	Stat->OnStatChanged.AddUObject(this, &AABCharacterBase::ApplyStat);
 	// 여기는 아직 위젯이 생성되기 전이라서, 위젯을 세팅할 수 없음
 }
 
@@ -355,4 +356,10 @@ int32 AABCharacterBase::GetLevel() const
 void AABCharacterBase::SetLevel(const int32 InNewLevel) const
 {
 	Stat->SetLevelStat(InNewLevel);
+}
+
+void AABCharacterBase::ApplyStat(const FABCharacterStat& BaseStat, const FABCharacterStat& ModifierStat)
+{
+	const FABCharacterStat TotalStat = BaseStat + ModifierStat;
+	GetCharacterMovement()->MaxWalkSpeed = TotalStat.MovementSpeed;
 }

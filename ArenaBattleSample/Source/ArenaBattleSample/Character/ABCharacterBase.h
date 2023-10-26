@@ -117,4 +117,5 @@ protected:
 public:
 	int32 GetLevel() const;
 	void SetLevel(int32 InNewLevel) const;
+	void ApplyStat(const FABCharacterStat& BaseStat, const FABCharacterStat& ModifierStat);
 };
