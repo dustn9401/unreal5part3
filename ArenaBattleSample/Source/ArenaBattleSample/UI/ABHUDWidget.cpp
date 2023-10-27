@@ -30,8 +30,8 @@ void UABHUDWidget::NativeConstruct()
 void UABHUDWidget::UpdateStat(const FABCharacterStat& BaseStat, const FABCharacterStat& ModifierStat)
 {
 	auto TotalStat = BaseStat + ModifierStat;
-	HpBar->SetMaxHp(TotalStat.MaxHp);
 	CharacterStat->UpdateStat(BaseStat, ModifierStat);
+	HpBar->UpdateStat(BaseStat, ModifierStat);
 }
 
 void UABHUDWidget::UpdateHpBar(float NewCurrentHp)

@@ -306,11 +306,11 @@ void AABCharacterBase::PlayDeadAnimation()
 
 void AABCharacterBase::SetCharacterWidget(UABUserWidget* InUserWidget)
 {
-	UABHpBarWidget* HpBarWidget = Cast<UABHpBarWidget>(InUserWidget);
-	if (HpBarWidget)
+	if (UABHpBarWidget* HpBarWidget = Cast<UABHpBarWidget>(InUserWidget))
 	{
-		HpBarWidget->SetMaxHp(Stat->GetTotalStat().MaxHp);
+		HpBarWidget->UpdateStat(Stat->GetBaseStat(), Stat->GetModifierStat());
 		HpBarWidget->UpdateHpBar(Stat->GetCurrentHp());
+		Stat->OnStatChanged.AddUObject(HpBarWidget, &UABHpBarWidget::UpdateStat);
 		Stat->OnHpChanged.AddUObject(HpBarWidget, &UABHpBarWidget::UpdateHpBar);
 	}
 }

@@ -4,10 +4,12 @@
 #include "UI/ABHpBarWidget.h"
 
 #include "Components/ProgressBar.h"
+#include "Components/TextBlock.h"
 #include "Interface/ABCharacterWidgetInterface.h"
 
 UABHpBarWidget::UABHpBarWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
+	CurrentHp = 0.0f;
 	MaxHp = -1.0f;
 }
 
@@ -17,6 +19,9 @@ void UABHpBarWidget::NativeConstruct()
 
 	HpProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("PbHpBar")));
 	ensure(HpProgressBar);
+
+	CurrentHpText = Cast<UTextBlock>(GetWidgetFromName(TEXT("TextCurrentHp")));
+	MaxHpText = Cast<UTextBlock>(GetWidgetFromName(TEXT("TextMaxHp")));
 	
 	if (IABCharacterWidgetInterface* CharacterWidget = Cast<IABCharacterWidgetInterface>(OwningActor))
 	{
@@ -24,11 +29,34 @@ void UABHpBarWidget::NativeConstruct()
 	}
 }
 
-void UABHpBarWidget::UpdateHpBar(float NewCurrentHp)
+void UABHpBarWidget::UpdateStat(const FABCharacterStat& BaseStat, const FABCharacterStat& ModifierStat)
 {
-	ensure(MaxHp > 0.0f);
+	const FABCharacterStat TotalStat = BaseStat + ModifierStat;
+	MaxHp = TotalStat.MaxHp;
+
+	if (MaxHpText)
+	{
+		MaxHpText->SetText(FText::FromString(FString::Printf(TEXT("%d"), FMath::RoundToInt(MaxHp))));
+	}
+	
 	if (HpProgressBar)
 	{
-		HpProgressBar->SetPercent(NewCurrentHp / MaxHp);
+		HpProgressBar->SetPercent(CurrentHp / MaxHp);
+	}
+}
+
+void UABHpBarWidget::UpdateHpBar(float NewCurrentHp)
+{
+	ensureMsgf(MaxHp > 0.0f, TEXT("UABHpBarWidget::UpdateStat() 을 먼저 호출해주세요"));
+	CurrentHp = NewCurrentHp;
+	
+	if (CurrentHpText)
+	{
+		CurrentHpText->SetText(FText::FromString(FString::Printf(TEXT("%d"), FMath::RoundToInt(CurrentHp))));
+	}
+	
+	if (HpProgressBar)
+	{
+		HpProgressBar->SetPercent(CurrentHp / MaxHp);
 	}
 }
