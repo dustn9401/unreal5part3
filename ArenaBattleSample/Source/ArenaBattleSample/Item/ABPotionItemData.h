@@ -4,14 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Item/ABItemData.h"
-#include "GameData/ABCharacterStat.h"
-#include "ABWeaponItemData.generated.h"
+#include "ABPotionItemData.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARENABATTLESAMPLE_API UABWeaponItemData : public UABItemData
+class ARENABATTLESAMPLE_API UABPotionItemData : public UABItemData
 {
 	GENERATED_BODY()
 
@@ -21,12 +20,9 @@ class ARENABATTLESAMPLE_API UABWeaponItemData : public UABItemData
 	}
 
 public:
-	UABWeaponItemData();
-	
-public:
-	UPROPERTY(EditAnywhere, Category=Weapon)
-	TSoftObjectPtr<USkeletalMesh> WeaponMesh;
+	UABPotionItemData();
 
-	UPROPERTY(EditAnywhere, Category=Stat)
-	FABCharacterStat ModifierStat;
+public:
+	UPROPERTY(EditAnywhere, Category=Hp)
+	float HealAmount;
 };

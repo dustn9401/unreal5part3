@@ -17,7 +17,7 @@ void UABCharacterStatComponent::InitializeComponent()
 
 	// 위젯, HUD 생성보다 먼저 호출되어야 함
 	SetLevelStat(CurrentLevelNumber);
-	SetHp(BaseStat.MaxHp);
+	SetHp(GetTotalStat().MaxHp);
 }
 
 void UABCharacterStatComponent::SetLevelStat(int32 InNewLevelNumber)
@@ -43,6 +43,6 @@ float UABCharacterStatComponent::ApplyDamage(float InDamage)
 
 void UABCharacterStatComponent::SetHp(float NewHp)
 {
-	CurrentHp = FMath::Clamp<float>(NewHp, 0.0f, BaseStat.MaxHp);
+	CurrentHp = FMath::Clamp<float>(NewHp, 0.0f, GetTotalStat().MaxHp);
 	OnHpChanged.Broadcast(CurrentHp);
 }

@@ -11,7 +11,7 @@
 #include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Item/ABItemData.h"
-#include "Item/ABWeaponItemData.h"
+#include "Item/ABItems.h"
 #include "Physics/ABCollision.h"
 #include "UI/ABHpBarWidget.h"
 #include "UI/ABUserWidget.h"
@@ -318,7 +318,6 @@ void AABCharacterBase::SetCharacterWidget(UABUserWidget* InUserWidget)
 void AABCharacterBase::TakeItem(UABItemData* InItemData)
 {
 	// 여기에서 아이템 종류에 따라 분기하여 효과 적용
-	UE_LOG(LogTemp, Log, TEXT("Called TakeItem"));
 	if (InItemData)
 	{
 		TakeItemDelegates[static_cast<uint8>(InItemData->Type)].ItemDelegate.ExecuteIfBound(InItemData);
@@ -327,13 +326,15 @@ void AABCharacterBase::TakeItem(UABItemData* InItemData)
 
 void AABCharacterBase::DrinkPotion(UABItemData* InItemData)
 {
-	UE_LOG(LogABCharacter, Log, TEXT("DrinkPotion"));
+	if (const UABPotionItemData* PotionItemData = Cast<UABPotionItemData>(InItemData))
+	{
+		Stat->HealHp(PotionItemData->HealAmount);
+	}
 }
 
 void AABCharacterBase::EquipWeapon(UABItemData* InItemData)
 {
-	UABWeaponItemData* WeaponItemData = Cast<UABWeaponItemData>(InItemData);
-	if (WeaponItemData)
+	if (const UABWeaponItemData* WeaponItemData = Cast<UABWeaponItemData>(InItemData))
 	{
 		const auto WeaponMesh = WeaponItemData->WeaponMesh.IsPending()
 			                        ? WeaponItemData->WeaponMesh.LoadSynchronous()
@@ -345,7 +346,10 @@ void AABCharacterBase::EquipWeapon(UABItemData* InItemData)
 
 void AABCharacterBase::ReadScroll(UABItemData* InItemData)
 {
-	UE_LOG(LogABCharacter, Log, TEXT("ReadScroll"));
+	if (const UABScrollItemData* ScrollItemData = Cast<UABScrollItemData>(InItemData))
+	{
+		Stat->SetModifierStat(Stat->GetModifierStat() + ScrollItemData->BaseStat);
+	}
 }
 
 int32 AABCharacterBase::GetLevel() const

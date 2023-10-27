@@ -3,15 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Item/ABItemData.h"
 #include "GameData/ABCharacterStat.h"
-#include "ABWeaponItemData.generated.h"
+#include "Item/ABItemData.h"
+#include "ABScrollItemData.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARENABATTLESAMPLE_API UABWeaponItemData : public UABItemData
+class ARENABATTLESAMPLE_API UABScrollItemData : public UABItemData
 {
 	GENERATED_BODY()
 
@@ -21,12 +21,9 @@ class ARENABATTLESAMPLE_API UABWeaponItemData : public UABItemData
 	}
 
 public:
-	UABWeaponItemData();
-	
-public:
-	UPROPERTY(EditAnywhere, Category=Weapon)
-	TSoftObjectPtr<USkeletalMesh> WeaponMesh;
+	UABScrollItemData();
 
+public:
 	UPROPERTY(EditAnywhere, Category=Stat)
-	FABCharacterStat ModifierStat;
+	FABCharacterStat BaseStat;
 };
