@@ -10,6 +10,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Character/ABCharacterControlData.h"
 #include "Character/ABCharacterNonPlayer.h"
+#include "Interface/ABGameInterface.h"
 #include "Physics/ABCollision.h"
 #include "UI/ABHpBarWidget.h"
 #include "UI/ABHUDWidget.h"
@@ -197,7 +198,10 @@ void AABCharacterPlayer::SetDead()
 		DisableInput(CastChecked<APlayerController>(GetController()));
 	}
 
-	
+	if (IABGameInterface* ABGameMode = Cast<IABGameInterface>(GetWorld()->GetAuthGameMode()))
+	{
+		ABGameMode->OnPlayerDead();
+	}
 }
 
 void AABCharacterPlayer::SetupHUDWidget(UABHUDWidget* InHUDWidget)

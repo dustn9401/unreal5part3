@@ -245,8 +245,7 @@ void AABStageGimmick::OnOpponentDestroyed(AActor* DestroyedActor)
 	
 	if (CurrentOpponentCount == 0)
 	{
-		IABGameInterface* ABGameMode = Cast<IABGameInterface>(GetWorld()->GetAuthGameMode());
-		if (ABGameMode->IsGameCleared())
+		if (IABGameInterface* ABGameMode = Cast<IABGameInterface>(GetWorld()->GetAuthGameMode()); ABGameMode->IsGameCleared())
 		{
 			// TODO
 		}
