@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+#include "Interface/ABGameInterface.h"
 #include "ABGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ARENABATTLESAMPLE_API AABGameMode : public AGameModeBase
+class ARENABATTLESAMPLE_API AABGameMode : public AGameModeBase, public IABGameInterface
 {
 	GENERATED_BODY()
 
@@ -25,4 +26,10 @@ public:
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category=Game)
 	uint8 bIsCleared : 1;
+
+// IABGameInterface Impl
+public:
+	virtual void OnPlayerScoreChanged(int32 NewPlayerScore) override;
+	virtual void OnPlayerDead() override;
+	virtual bool IsGameCleared() override;
 };

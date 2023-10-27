@@ -18,3 +18,22 @@ AABGameMode::AABGameMode(): ClearScore(3), CurrentScore(0), bIsCleared(false)
 		PlayerControllerClass = PlayerControllerClassRef.Class;
 	}
 }
+
+void AABGameMode::OnPlayerScoreChanged(int32 NewPlayerScore)
+{
+	CurrentScore = NewPlayerScore;
+
+	if (CurrentScore >= ClearScore)
+	{
+		bIsCleared = true;
+	}
+}
+
+void AABGameMode::OnPlayerDead()
+{
+}
+
+bool AABGameMode::IsGameCleared()
+{
+	return bIsCleared;
+}

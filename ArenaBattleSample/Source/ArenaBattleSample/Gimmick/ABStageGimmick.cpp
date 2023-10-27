@@ -5,6 +5,7 @@
 
 #include "Character/ABCharacterNonPlayer.h"
 #include "Components/BoxComponent.h"
+#include "Interface/ABGameInterface.h"
 #include "Item/ABItemBox.h"
 #include "Physics/ABCollision.h"
 
@@ -244,7 +245,15 @@ void AABStageGimmick::OnOpponentDestroyed(AActor* DestroyedActor)
 	
 	if (CurrentOpponentCount == 0)
 	{
-		SetState(EStageState::Reward);
+		IABGameInterface* ABGameMode = Cast<IABGameInterface>(GetWorld()->GetAuthGameMode());
+		if (ABGameMode->IsGameCleared())
+		{
+			// TODO
+		}
+		else
+		{
+			SetState(EStageState::Reward);
+		}
 	}
 }
 
