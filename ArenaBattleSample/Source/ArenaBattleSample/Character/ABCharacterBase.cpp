@@ -348,7 +348,7 @@ void AABCharacterBase::ReadScroll(UABItemData* InItemData)
 {
 	if (const UABScrollItemData* ScrollItemData = Cast<UABScrollItemData>(InItemData))
 	{
-		Stat->SetModifierStat(Stat->GetModifierStat() + ScrollItemData->BaseStat);
+		Stat->AddBaseStat(ScrollItemData->BaseStat);
 	}
 }
 

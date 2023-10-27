@@ -81,7 +81,7 @@ void AABCharacterPlayer::BeginPlay()
 		EnableInput(CastChecked<APlayerController>(GetController()));
 	}
 
-	// SetCanBeDamaged(false);
+	SetCanBeDamaged(false);
 }
 
 void AABCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
