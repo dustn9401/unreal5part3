@@ -16,4 +16,13 @@ class ARENABATTLESAMPLE_API AABGameMode : public AGameModeBase
 
 public:
 	AABGameMode();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=Game)
+	int32 ClearScore;	// 클리어에 필요한 점수
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category=Game)
+	int32 CurrentScore;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category=Game)
+	uint8 bIsCleared : 1;
 };

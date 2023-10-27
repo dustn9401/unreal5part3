@@ -3,9 +3,10 @@
 
 #include "Game/ABGameMode.h"
 
-AABGameMode::AABGameMode()
+AABGameMode::AABGameMode(): ClearScore(3), CurrentScore(0), bIsCleared(false)
 {
-	static ConstructorHelpers::FClassFinder<APawn> DefaultPawnClassRef(TEXT("/Script/CoreUObject.Class'/Script/ArenaBattleSample.ABCharacterPlayer'"));
+	// 블루프린트 클래스를 사용할 경우, 아래처럼 작은따옴표 지우고 _C 를 붙여준다.
+	static ConstructorHelpers::FClassFinder<APawn> DefaultPawnClassRef(TEXT("/Game/ArenaBattle/Blueprint/BP_ABCharacterBase.BP_ABCharacterBase_C"));
 	if (DefaultPawnClassRef.Class)
 	{
 		DefaultPawnClass = DefaultPawnClassRef.Class;
