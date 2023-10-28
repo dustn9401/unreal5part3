@@ -7,11 +7,11 @@
 
 AABPlayerController::AABPlayerController()
 {
-	static ConstructorHelpers::FClassFinder<UABHUDWidget> HUDWidgetClassRef(TEXT("/Game/ArenaBattle/UI/WBP_ABHUD.WBP_ABHUD_C"));
-	if (HUDWidgetClassRef.Class)
-	{
-		HUDWidgetClass = HUDWidgetClassRef.Class;
-	}
+	// static ConstructorHelpers::FClassFinder<UABHUDWidget> HUDWidgetClassRef(TEXT("/Game/ArenaBattle/UI/WBP_ABHUD.WBP_ABHUD_C"));
+	// if (HUDWidgetClassRef.Class)
+	// {
+	// 	HUDWidgetClass = HUDWidgetClassRef.Class;
+	// }
 }
 
 void AABPlayerController::GameScoreChanged(int32 NewScore)
@@ -33,6 +33,9 @@ void AABPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	/*
+	블루프린트에서 호출하도록 수정됨
+
 	// 게임 실행 시 포커스 시키는 코드 
 	const FInputModeGameOnly GameOnlyInputMode;
 	SetInputMode(GameOnlyInputMode);
@@ -43,6 +46,7 @@ void AABPlayerController::BeginPlay()
 	{
 		HUDWidget->AddToViewport();
 	}
+	*/
 }
 
 
