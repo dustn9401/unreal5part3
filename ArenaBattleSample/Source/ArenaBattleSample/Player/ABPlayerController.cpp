@@ -36,10 +36,10 @@ void AABPlayerController::OnClickRetry()
 
 void AABPlayerController::BeginPlay()
 {
-	AB_LOG(LogTemp, Log, TEXT("=========================== Super::BeginPlay() Start =============================="));
+	AB_LOG(LogABNetwork, Log, TEXT("Super::BeginPlay() Start"));
 	
 	Super::BeginPlay();
 	
-	AB_LOG(LogTemp, Log, TEXT("=========================== Super::BeginPlay() End =============================="));
+	AB_LOG(LogABNetwork, Log, TEXT("Super::BeginPlay() End"));
 }
 

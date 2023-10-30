@@ -3,6 +3,7 @@
 
 #include "Game/ABGameMode.h"
 
+#include "ArenaBattleSample.h"
 #include "Player/ABPlayerController.h"
 
 AABGameMode::AABGameMode(): ClearScore(3), CurrentScore(0), bIsCleared(false)
@@ -32,4 +33,36 @@ void AABGameMode::OnPlayerDead()
 bool AABGameMode::IsGameCleared()
 {
 	return bIsCleared;
+}
+
+void AABGameMode::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId,
+	FString& ErrorMessage)
+{
+	AB_LOG(LogABNetwork, Log, TEXT("Super Start"));
+	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
+	AB_LOG(LogABNetwork, Log, TEXT("Super End"));
+}
+
+APlayerController* AABGameMode::Login(UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal,
+	const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
+{
+	AB_LOG(LogABNetwork, Log, TEXT("Super Start"));
+	APlayerController* Ret = Super::Login(NewPlayer, InRemoteRole, Portal, Options, UniqueId, ErrorMessage);
+	AB_LOG(LogABNetwork, Log, TEXT("Super End"));
+	
+	return Ret;
+}
+
+void AABGameMode::PostLogin(APlayerController* NewPlayer)
+{
+	AB_LOG(LogABNetwork, Log, TEXT("Super Start"));
+	Super::PostLogin(NewPlayer);
+	AB_LOG(LogABNetwork, Log, TEXT("Super End"));
+}
+
+void AABGameMode::StartPlay()
+{
+	AB_LOG(LogABNetwork, Log, TEXT("Super Start"));
+	Super::StartPlay();
+	AB_LOG(LogABNetwork, Log, TEXT("Super End"));
 }
