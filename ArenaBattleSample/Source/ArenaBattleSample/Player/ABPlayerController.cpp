@@ -3,6 +3,8 @@
 
 #include "Player/ABPlayerController.h"
 
+#include "ABSaveGame.h"
+#include "Kismet/GameplayStatics.h"
 #include "UI/ABHUDWidget.h"
 
 AABPlayerController::AABPlayerController()
@@ -29,9 +31,29 @@ void AABPlayerController::GameOver()
 	K2_OnGameOver();
 }
 
+void AABPlayerController::OnClickRetry()
+{
+	ensure(SaveGameInstance);
+	SaveGameInstance->RetryCount++;
+	
+	if (!UGameplayStatics::SaveGameToSlot(SaveGameInstance, TEXT("Player0"), 0))
+	{
+		UE_LOG(LogTemp, Error, TEXT("Save Game Error!"));
+	}
+}
+
 void AABPlayerController::BeginPlay()
 {
+	// Super::BeginPlay() 에서 블루프린트의 BeginPlay가 호출되기 때문에, SaveGameInstance 변수 초기화는 여기에 있어야 안전함
+	SaveGameInstance = Cast<UABSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("Player0"), 0));
+	if (SaveGameInstance == nullptr)
+	{
+		SaveGameInstance = NewObject<UABSaveGame>();
+	}
+	
 	Super::BeginPlay();
+	
+	UE_LOG(LogTemp, Log, TEXT("=========================== AABPlayerController::BeginPlay() =============================="));
 
 	/*
 	블루프린트에서 호출하도록 수정됨
@@ -48,6 +70,4 @@ void AABPlayerController::BeginPlay()
 	}
 	*/
 }
-
-
 

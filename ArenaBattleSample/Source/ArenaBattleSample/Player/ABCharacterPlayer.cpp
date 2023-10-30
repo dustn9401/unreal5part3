@@ -14,6 +14,7 @@
 #include "Physics/ABCollision.h"
 #include "UI/ABHpBarWidget.h"
 #include "UI/ABHUDWidget.h"
+#include "GameFramework/GameModeBase.h"
 
 AABCharacterPlayer::AABCharacterPlayer()
 {
@@ -82,7 +83,7 @@ void AABCharacterPlayer::BeginPlay()
 		EnableInput(CastChecked<APlayerController>(GetController()));
 	}
 
-	SetCanBeDamaged(false);
+	// SetCanBeDamaged(false);
 }
 
 void AABCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
