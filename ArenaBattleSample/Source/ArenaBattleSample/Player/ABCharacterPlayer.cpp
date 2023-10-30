@@ -117,6 +117,8 @@ void AABCharacterPlayer::ChangeCharacterControl()
 
 void AABCharacterPlayer::SetCharacterControl(const ECharacterControlType NewCharacterControlType)
 {
+	if (!IsLocallyControlled()) return;
+	
 	UABCharacterControlData* NewCharacterControl = CharacterControlDataMap[NewCharacterControlType];
 	check(NewCharacterControl);
 

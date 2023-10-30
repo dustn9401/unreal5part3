@@ -29,7 +29,6 @@ public:
 
 // IABGameInterface Impl
 public:
-	virtual void OnPlayerScoreChanged(int32 NewPlayerScore) override;
 	virtual void OnPlayerDead() override;
 	virtual bool IsGameCleared() override;
 };

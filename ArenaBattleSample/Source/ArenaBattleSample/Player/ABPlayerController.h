@@ -24,7 +24,6 @@ public:
 	void K2_OnGameOver();
 
 	// GameMode에 의해 호출되는 함수들
-	void GameScoreChanged(int32 NewScore);
 	void GameClear();
 	void GameOver();
 

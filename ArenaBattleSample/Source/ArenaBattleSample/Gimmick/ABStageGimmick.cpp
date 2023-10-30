@@ -243,23 +243,6 @@ void AABStageGimmick::OnOpponentDestroyed(AActor* DestroyedActor)
 {
 	CurrentOpponentCount--;
 	ensure(CurrentOpponentCount >= 0);
-	
-	if (CurrentOpponentCount == 0)
-	{
-		IABGameInterface* ABGameMode = Cast<IABGameInterface>(GetWorld()->GetAuthGameMode());
-		if (ABGameMode)
-		{
-			ABGameMode->OnPlayerScoreChanged(CurrentStageNum);
-			if (ABGameMode->IsGameCleared())
-			{
-				// GameMode 코드에서 처리
-			}
-			else
-			{
-				SetState(EStageState::Reward);
-			}
-		}
-	}
 }
 
 void AABStageGimmick::OnOpponentSpawn()

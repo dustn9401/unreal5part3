@@ -21,28 +21,6 @@ AABGameMode::AABGameMode(): ClearScore(3), CurrentScore(0), bIsCleared(false)
 	}
 }
 
-void AABGameMode::OnPlayerScoreChanged(int32 NewPlayerScore)
-{
-	CurrentScore = NewPlayerScore;
-
-	// 멀티플레이 게임 일 경우, GetPlayerControllerIterator로 모든 유저에게 알려야함
-	AABPlayerController* ABPlayerController = Cast<AABPlayerController>(GetWorld()->GetFirstPlayerController());
-	if (ABPlayerController)
-	{
-		ABPlayerController->GameScoreChanged(NewPlayerScore);
-	}
-
-	if (CurrentScore >= ClearScore)
-	{
-		bIsCleared = true;
-
-		if (ABPlayerController)
-		{
-			ABPlayerController->GameClear();
-		}
-	}
-}
-
 void AABGameMode::OnPlayerDead()
 {
 	if (AABPlayerController* ABPlayerController = Cast<AABPlayerController>(GetWorld()->GetFirstPlayerController()))
