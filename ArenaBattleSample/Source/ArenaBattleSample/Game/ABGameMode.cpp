@@ -3,6 +3,7 @@
 
 #include "Game/ABGameMode.h"
 
+#include "ABGameState.h"
 #include "ArenaBattleSample.h"
 #include "Player/ABPlayerController.h"
 
@@ -20,6 +21,8 @@ AABGameMode::AABGameMode(): ClearScore(3), CurrentScore(0), bIsCleared(false)
 	{
 		PlayerControllerClass = PlayerControllerClassRef.Class;
 	}
+
+	GameStateClass = AABGameState::StaticClass();
 }
 
 void AABGameMode::OnPlayerDead()
@@ -38,6 +41,7 @@ bool AABGameMode::IsGameCleared()
 void AABGameMode::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId,
 	FString& ErrorMessage)
 {
+	AB_LOG(LogABNetwork, Log, TEXT("========================================================="));
 	AB_LOG(LogABNetwork, Log, TEXT("Super Start"));
 	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
 	AB_LOG(LogABNetwork, Log, TEXT("Super End"));
