@@ -17,18 +17,11 @@ class ARENABATTLESAMPLE_API AABPlayerController : public APlayerController
 public:
 	AABPlayerController();
 
-	// 블루프린트용 함수들
-	UFUNCTION(BlueprintImplementableEvent, Category=Game, meta=(DisplayName="OnGameScoreChangedCpp"))
-	void K2_OnGameScoreChanged(int32 NewScore);
-
 	UFUNCTION(BlueprintImplementableEvent, Category=Game, meta=(DisplayName="OnGameClearCpp"))
 	void K2_OnGameClear();
 	
 	UFUNCTION(BlueprintImplementableEvent, Category=Game, meta=(DisplayName="OnGameOverCpp"))
 	void K2_OnGameOver();
-
-	UFUNCTION(BlueprintImplementableEvent, Category=Game, meta=(DisplayName="OnGameRetryCpp"))
-	void K2_OnGameRetry();
 
 	// GameMode에 의해 호출되는 함수들
 	void GameScoreChanged(int32 NewScore);
