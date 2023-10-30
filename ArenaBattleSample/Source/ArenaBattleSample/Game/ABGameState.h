@@ -13,5 +13,9 @@ UCLASS()
 class ARENABATTLESAMPLE_API AABGameState : public AGameState
 {
 	GENERATED_BODY()
-	
+
+// AGameState override
+public:
+	virtual void HandleBeginPlay() override;
+	virtual void OnRep_ReplicatedHasBegunPlay() override;
 };

@@ -66,6 +66,7 @@ void AABGameMode::PostLogin(APlayerController* NewPlayer)
 
 void AABGameMode::StartPlay()
 {
+	// GameMode::StartPlay() -> GameState::HandleBeginPlay() -> PlayerController::BeginPlay()
 	AB_LOG(LogABNetwork, Log, TEXT("Super Start"));
 	Super::StartPlay();
 	AB_LOG(LogABNetwork, Log, TEXT("Super End"));
