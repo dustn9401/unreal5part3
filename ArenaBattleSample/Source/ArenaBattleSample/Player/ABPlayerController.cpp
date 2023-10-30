@@ -4,6 +4,7 @@
 #include "Player/ABPlayerController.h"
 
 #include "ABSaveGame.h"
+#include "ArenaBattleSample.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/ABHUDWidget.h"
 
@@ -35,8 +36,10 @@ void AABPlayerController::OnClickRetry()
 
 void AABPlayerController::BeginPlay()
 {
+	AB_LOG(LogTemp, Log, TEXT("=========================== Super::BeginPlay() Start =============================="));
+	
 	Super::BeginPlay();
 	
-	UE_LOG(LogTemp, Log, TEXT("=========================== AABPlayerController::BeginPlay() =============================="));
+	AB_LOG(LogTemp, Log, TEXT("=========================== Super::BeginPlay() End =============================="));
 }
 
