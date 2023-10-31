@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class ARENABATTLESAMPLE_API AABGameState : public AGameState
+class ARENABATTLESAMPLE_API AABGameState : public AGameStateBase
 {
 	GENERATED_BODY()
 

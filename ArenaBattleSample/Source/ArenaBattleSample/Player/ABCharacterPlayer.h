@@ -25,6 +25,7 @@ protected:
 	virtual void PostNetInit() override;
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_Owner() override;
+	virtual void OnRep_Controller() override;
 
 public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
