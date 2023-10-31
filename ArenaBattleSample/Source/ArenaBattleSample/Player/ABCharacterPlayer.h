@@ -21,6 +21,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
+	virtual void PostNetInit() override;
+	virtual void PossessedBy(AController* NewController) override;
 
 public:
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;

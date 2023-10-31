@@ -31,7 +31,10 @@ public:
 	void OnClickRetry();
 
 protected:
+	virtual void PostInitializeComponents() override;
+	virtual void PostNetInit() override;
 	virtual void BeginPlay() override;
+	virtual void OnPossess(APawn* InPawn) override;
 
 // HUD Section: 블루프린트에서 관리하도록 수정됨 (BP_ABPlayerController)
 protected:

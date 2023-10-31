@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "GameFramework/GameMode.h"
 #include "Interface/ABGameInterface.h"
 #include "ABGameMode.generated.h"
 
@@ -11,7 +11,7 @@
  * 중요한 멀티플레이 로직이 대부분 포함된 클래스
  */
 UCLASS()
-class ARENABATTLESAMPLE_API AABGameMode : public AGameModeBase, public IABGameInterface
+class ARENABATTLESAMPLE_API AABGameMode : public AGameMode, public IABGameInterface
 {
 	GENERATED_BODY()
 

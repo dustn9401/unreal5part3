@@ -3,6 +3,7 @@
 
 #include "Player/ABCharacterPlayer.h"
 
+#include "ArenaBattleSample.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "InputMappingContext.h"
@@ -84,6 +85,72 @@ void AABCharacterPlayer::BeginPlay()
 	}
 
 	// SetCanBeDamaged(false);
+}
+
+void AABCharacterPlayer::PostInitializeComponents()
+{
+	AB_LOG(LogABNetwork, Log, TEXT("Start"));
+	
+	Super::PostInitializeComponents();
+	
+	AB_LOG(LogABNetwork, Log, TEXT("End"));
+}
+
+void AABCharacterPlayer::PostNetInit()
+{
+	// 플레이어 컨트롤러의 동명 함수와 마찬가지로 클라이언트에서만 호출되는 함수
+	// 
+	AB_LOG(LogABNetwork, Log, TEXT("Start"));
+
+	if (const AActor* OwnerActor = GetOwner())
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("Before Super::PostNetInit(); Owner = %s"), *OwnerActor->GetName());
+	}
+	else
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("Before Super::PostNetInit(); No Owner"));
+	}
+	
+	Super::PostNetInit();
+
+	if (const AActor* OwnerActor = GetOwner())
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("After Super::PostNetInit(); Owner = %s"), *OwnerActor->GetName());
+	}
+	else
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("After Super::PostNetInit(); No Owner"));
+	}
+
+	AB_LOG(LogABNetwork, Log, TEXT("End"));
+}
+
+void AABCharacterPlayer::PossessedBy(AController* NewController)
+{
+	// 호스트에서만 호출되는 함수, 클라이언트는 PostNetInit() 을 사용해야 한다.
+	AB_LOG(LogABNetwork, Log, TEXT("Start"));
+
+	if (const AActor* OwnerActor = GetOwner())
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("Before Super::PossessedBy, Owner = %s"), *OwnerActor->GetName());
+	}
+	else
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("Before Super::PossessedBy, No Owner"));
+	}
+	
+	Super::PossessedBy(NewController);
+
+	if (const AActor* OwnerActor = GetOwner())
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("After Super::PossessedBy, Owner = %s"), *OwnerActor->GetName());
+	}
+	else
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("After Super::PossessedBy, No Owner"));
+	}
+	
+	AB_LOG(LogABNetwork, Log, TEXT("End"));
 }
 
 void AABCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
