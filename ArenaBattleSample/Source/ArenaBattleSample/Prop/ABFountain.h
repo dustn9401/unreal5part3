@@ -28,4 +28,10 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category=Mesh)
 	TObjectPtr<class UStaticMeshComponent> Water;
+
+public:
+	UPROPERTY(Replicated)
+	float ServerRotationYaw;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
