@@ -75,14 +75,14 @@ AABCharacterPlayer::AABCharacterPlayer()
 
 void AABCharacterPlayer::BeginPlay()
 {
-	if (const auto OwnerActor = GetOwner())
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("Start, %s, %s"), *OwnerActor->GetName(), *GetName());
-	}
-	else
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("Start, No Owner, %s"), *GetName());
-	}
+	// if (const auto OwnerActor = GetOwner())
+	// {
+	// 	AB_LOG(LogABNetwork, Log, TEXT("Start, %s, %s"), *OwnerActor->GetName(), *GetName());
+	// }
+	// else
+	// {
+	// 	AB_LOG(LogABNetwork, Log, TEXT("Start, No Owner, %s"), *GetName());
+	// }
 	
 	Super::BeginPlay();
 
@@ -95,119 +95,119 @@ void AABCharacterPlayer::BeginPlay()
 
 	// SetCanBeDamaged(false);
 
-	if (const auto OwnerActor = GetOwner())
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("End, %s, %s"), *OwnerActor->GetName(), *GetName());
-	}
-	else
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("End, No Owner, %s"), *GetName());
-	}
+	// if (const auto OwnerActor = GetOwner())
+	// {
+	// 	AB_LOG(LogABNetwork, Log, TEXT("End, %s, %s"), *OwnerActor->GetName(), *GetName());
+	// }
+	// else
+	// {
+	// 	AB_LOG(LogABNetwork, Log, TEXT("End, No Owner, %s"), *GetName());
+	// }
 }
 
-void AABCharacterPlayer::PostInitializeComponents()
-{
-	AB_LOG(LogABNetwork, Log, TEXT("Start"));
-	
-	Super::PostInitializeComponents();
-	
-	AB_LOG(LogABNetwork, Log, TEXT("End"));
-}
-
-void AABCharacterPlayer::PostNetInit()
-{
-	// 플레이어 컨트롤러의 동명 함수와 마찬가지로 클라이언트에서만 호출되는 함수
-	// 자신의 캐릭터인 경우 Owner와 Controller가 모두 존재하고, 다른 플레이어의 캐릭터인 경우 둘다 null이다.
-
-	AB_LOG(LogABNetwork, Log, TEXT("Start, GetName() = %s, Controller == null: %d"), *GetName(), GetController() == nullptr);
-	if (const AActor* OwnerActor = GetOwner())
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("Start, Owner->GetName() = %s"), *OwnerActor->GetName());
-	}
-	else
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("No Owner"));
-	}
-	
-	Super::PostNetInit();
-
-	AB_LOG(LogABNetwork, Log, TEXT("End, GetName() = %s, Controller == null: %d"), *GetName(), GetController() == nullptr);
-	if (const AActor* OwnerActor = GetOwner())
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("End Owner->GetName() = %s"), *OwnerActor->GetName());
-	}
-	else
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("No Owner"));
-	}
-}
-
-void AABCharacterPlayer::PossessedBy(AController* NewController)
-{
-	// 호스트에서만 호출되는 함수, 클라이언트는 PostNetInit() 또는 OnRep_Owner() 을 사용해야 한다.
-	AB_LOG(LogABNetwork, Log, TEXT("Start, GetName() = %s"), *GetName());
-	if (const AActor* OwnerActor = GetOwner())
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("Before, Owner = %s"), *OwnerActor->GetName());
-	}
-	else
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("Before, No Owner"));
-	}
-
-	// 여기서 Owner가 세팅되고, 호스트의 RemoteRole이 ROLE_SimulatedProxy에서 ROLE_AutonomousProxy로 변경됨
-	AB_LOG(LogABNetwork, Log, TEXT("Before, Controller = %d, IsLocallyControlled = %d"), Controller != nullptr, IsLocallyControlled());
-	Super::PossessedBy(NewController);
-	AB_LOG(LogABNetwork, Log, TEXT("After, Controller = %d, IsLocallyControlled = %d"), Controller != nullptr, IsLocallyControlled());
-
-	AB_LOG(LogABNetwork, Log, TEXT("After, GetName() = %s"), *GetName());
-	if (const AActor* OwnerActor = GetOwner())
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("After, Owner = %s"), *OwnerActor->GetName());
-	}
-	else
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("After, No Owner"));
-	}
-}
-
-void AABCharacterPlayer::OnRep_Owner()
-{
-	// 컨트롤러가 할당된 뒤 호출되는 함수, GetOwner()가 null 이 아님을 보장한다.
-	const APlayerController* PC = Cast<APlayerController>(GetOwner());
-	ensure(PC);
-
-	
-	AB_LOG(LogABNetwork, Log, TEXT("Start, %s, %s"), *PC->GetName(), *PC->GetLocalPlayer()->GetName());
-	AB_LOG(LogABNetwork, Log, TEXT("Owner == Controller: %d"), GetOwner() == Controller);
-	
-	Super::OnRep_Owner();
-
-	AB_LOG(LogABNetwork, Log, TEXT("End, %s, %s"), *PC->GetName(), *PC->GetLocalPlayer()->GetName());
-}
-
-void AABCharacterPlayer::OnRep_Controller()
-{
-	if (const auto OwnerActor = GetOwner())
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("Start, %s, %s"), *OwnerActor->GetName(), *GetName());
-	}
-	else
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("Start, No Owner, %s"), *GetName());
-	}
-	
-	Super::OnRep_Controller();
-
-	if (const auto OwnerActor = GetOwner())
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("End, %s, %s"), *OwnerActor->GetName(), *GetName());
-	}
-	else
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("End, No Owner, %s"), *GetName());
-	}
-}
+// void AABCharacterPlayer::PostInitializeComponents()
+// {
+// 	AB_LOG(LogABNetwork, Log, TEXT("Start"));
+// 	
+// 	Super::PostInitializeComponents();
+// 	
+// 	AB_LOG(LogABNetwork, Log, TEXT("End"));
+// }
+//
+// void AABCharacterPlayer::PostNetInit()
+// {
+// 	// 플레이어 컨트롤러의 동명 함수와 마찬가지로 클라이언트에서만 호출되는 함수
+// 	// 자신의 캐릭터인 경우 Owner와 Controller가 모두 존재하고, 다른 플레이어의 캐릭터인 경우 둘다 null이다.
+//
+// 	AB_LOG(LogABNetwork, Log, TEXT("Start, GetName() = %s, Controller == null: %d"), *GetName(), GetController() == nullptr);
+// 	if (const AActor* OwnerActor = GetOwner())
+// 	{
+// 		AB_LOG(LogABNetwork, Log, TEXT("Start, Owner->GetName() = %s"), *OwnerActor->GetName());
+// 	}
+// 	else
+// 	{
+// 		AB_LOG(LogABNetwork, Log, TEXT("No Owner"));
+// 	}
+// 	
+// 	Super::PostNetInit();
+//
+// 	AB_LOG(LogABNetwork, Log, TEXT("End, GetName() = %s, Controller == null: %d"), *GetName(), GetController() == nullptr);
+// 	if (const AActor* OwnerActor = GetOwner())
+// 	{
+// 		AB_LOG(LogABNetwork, Log, TEXT("End Owner->GetName() = %s"), *OwnerActor->GetName());
+// 	}
+// 	else
+// 	{
+// 		AB_LOG(LogABNetwork, Log, TEXT("No Owner"));
+// 	}
+// }
+//
+// void AABCharacterPlayer::PossessedBy(AController* NewController)
+// {
+// 	// 호스트에서만 호출되는 함수, 클라이언트는 PostNetInit() 또는 OnRep_Owner() 을 사용해야 한다.
+// 	AB_LOG(LogABNetwork, Log, TEXT("Start, GetName() = %s"), *GetName());
+// 	if (const AActor* OwnerActor = GetOwner())
+// 	{
+// 		AB_LOG(LogABNetwork, Log, TEXT("Before, Owner = %s"), *OwnerActor->GetName());
+// 	}
+// 	else
+// 	{
+// 		AB_LOG(LogABNetwork, Log, TEXT("Before, No Owner"));
+// 	}
+//
+// 	// 여기서 Owner가 세팅되고, 호스트의 RemoteRole이 ROLE_SimulatedProxy에서 ROLE_AutonomousProxy로 변경됨
+// 	AB_LOG(LogABNetwork, Log, TEXT("Before, Controller = %d, IsLocallyControlled = %d"), Controller != nullptr, IsLocallyControlled());
+// 	Super::PossessedBy(NewController);
+// 	AB_LOG(LogABNetwork, Log, TEXT("After, Controller = %d, IsLocallyControlled = %d"), Controller != nullptr, IsLocallyControlled());
+//
+// 	AB_LOG(LogABNetwork, Log, TEXT("After, GetName() = %s"), *GetName());
+// 	if (const AActor* OwnerActor = GetOwner())
+// 	{
+// 		AB_LOG(LogABNetwork, Log, TEXT("After, Owner = %s"), *OwnerActor->GetName());
+// 	}
+// 	else
+// 	{
+// 		AB_LOG(LogABNetwork, Log, TEXT("After, No Owner"));
+// 	}
+// }
+//
+// void AABCharacterPlayer::OnRep_Owner()
+// {
+// 	// 컨트롤러가 할당된 뒤 호출되는 함수, GetOwner()가 null 이 아님을 보장한다.
+// 	const APlayerController* PC = Cast<APlayerController>(GetOwner());
+// 	ensure(PC);
+//
+// 	
+// 	AB_LOG(LogABNetwork, Log, TEXT("Start, %s, %s"), *PC->GetName(), *PC->GetLocalPlayer()->GetName());
+// 	AB_LOG(LogABNetwork, Log, TEXT("Owner == Controller: %d"), GetOwner() == Controller);
+// 	
+// 	Super::OnRep_Owner();
+//
+// 	AB_LOG(LogABNetwork, Log, TEXT("End, %s, %s"), *PC->GetName(), *PC->GetLocalPlayer()->GetName());
+// }
+//
+// void AABCharacterPlayer::OnRep_Controller()
+// {
+// 	if (const auto OwnerActor = GetOwner())
+// 	{
+// 		AB_LOG(LogABNetwork, Log, TEXT("Start, %s, %s"), *OwnerActor->GetName(), *GetName());
+// 	}
+// 	else
+// 	{
+// 		AB_LOG(LogABNetwork, Log, TEXT("Start, No Owner, %s"), *GetName());
+// 	}
+// 	
+// 	Super::OnRep_Controller();
+//
+// 	if (const auto OwnerActor = GetOwner())
+// 	{
+// 		AB_LOG(LogABNetwork, Log, TEXT("End, %s, %s"), *OwnerActor->GetName(), *GetName());
+// 	}
+// 	else
+// 	{
+// 		AB_LOG(LogABNetwork, Log, TEXT("End, No Owner, %s"), *GetName());
+// 	}
+// }
 
 void AABCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {

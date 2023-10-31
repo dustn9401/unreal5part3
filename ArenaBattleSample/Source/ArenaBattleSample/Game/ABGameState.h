@@ -15,7 +15,7 @@ class ARENABATTLESAMPLE_API AABGameState : public AGameStateBase
 	GENERATED_BODY()
 
 // AGameState override
-public:
-	virtual void HandleBeginPlay() override;
-	virtual void OnRep_ReplicatedHasBegunPlay() override;
+// public:
+// 	virtual void HandleBeginPlay() override;
+// 	virtual void OnRep_ReplicatedHasBegunPlay() override;
 };
