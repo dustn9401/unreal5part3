@@ -127,7 +127,7 @@ void AABCharacterPlayer::PostNetInit()
 
 void AABCharacterPlayer::PossessedBy(AController* NewController)
 {
-	// 호스트에서만 호출되는 함수, 클라이언트는 PostNetInit() 을 사용해야 한다.
+	// 호스트에서만 호출되는 함수, 클라이언트는 PostNetInit() 또는 OnRep_Owner() 을 사용해야 한다.
 	AB_LOG(LogABNetwork, Log, TEXT("Start"));
 
 	if (const AActor* OwnerActor = GetOwner())
@@ -150,6 +150,16 @@ void AABCharacterPlayer::PossessedBy(AController* NewController)
 		AB_LOG(LogABNetwork, Log, TEXT("After Super::PossessedBy, No Owner"));
 	}
 	
+	AB_LOG(LogABNetwork, Log, TEXT("End"));
+}
+
+void AABCharacterPlayer::OnRep_Owner()
+{
+	// Owner 값 할당될때 호출되는 클라이언트 전용 함수
+	AB_LOG(LogABNetwork, Log, TEXT("Start"));
+	
+	Super::OnRep_Owner();
+
 	AB_LOG(LogABNetwork, Log, TEXT("End"));
 }
 
