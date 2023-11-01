@@ -33,11 +33,17 @@ public:
 	UPROPERTY(ReplicatedUsing=OnRep_ServerRotationYaw)
 	float ServerRotationYaw;
 
+	UPROPERTY(ReplicatedUsing=OnRep_ServerLightColor)
+	FLinearColor ServerLightColor;
+
 	// UPROPERTY(Replicated)
 	// TArray<float> BigData;
 
 	UFUNCTION()
 	void OnRep_ServerRotationYaw();
+
+	UFUNCTION()
+	void OnRep_ServerLightColor();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

@@ -4,6 +4,7 @@
 #include "Prop/ABFountain.h"
 
 #include "ArenaBattleSample.h"
+#include "Components/PointLightComponent.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -37,6 +38,7 @@ AABFountain::AABFountain()
 	bReplicates = true;
 	NetUpdateFrequency = 1.0f;
 	NetCullDistanceSquared = static_cast<float>(2000 * 2000);
+	NetDormancy = DORM_DormantAll;
 }
 
 // Called when the game starts or when spawned
@@ -46,12 +48,23 @@ void AABFountain::BeginPlay()
 
 	if (HasAuthority())
 	{
-		FTimerHandle Handle;
-		GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
 		{
-			// BigData.Init(BigDataElement, 1000);
-			// BigDataElement += 1.0f;
-		}), 1.0f, true, 0.0f);
+			FTimerHandle Handle;
+			GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
+			{
+				ServerLightColor = FLinearColor(FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), 1.0f);
+				OnRep_ServerLightColor();
+			}), 1.0f, true, 0.0f);
+		}
+
+		{
+			FTimerHandle Handle;
+			GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
+			{
+				AB_LOG(LogABNetwork, Log, TEXT("Timer Called!!"));
+				FlushNetDormancy();
+			}), 10.0f, false, -1.0f);
+		}
 	}
 }
 
@@ -90,11 +103,26 @@ void AABFountain::OnRep_ServerRotationYaw()
 	ClientTimeSinceUpdate = 0.0f;
 }
 
+void AABFountain::OnRep_ServerLightColor()
+{
+	if (!HasAuthority())
+	{
+		AB_LOG(LogABNetwork, Log, TEXT("Color: %s"), *ServerLightColor.ToString());
+	}
+
+	UPointLightComponent* PointLight = Cast<UPointLightComponent>(GetComponentByClass(UPointLightComponent::StaticClass()));
+	if (PointLight)
+	{
+		PointLight->SetLightColor(ServerLightColor);
+	}
+}
+
 void AABFountain::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AABFountain, ServerRotationYaw);
+	DOREPLIFETIME(AABFountain, ServerLightColor);
 	// DOREPLIFETIME(AABFountain, BigData);
 }
 
