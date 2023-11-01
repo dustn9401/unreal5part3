@@ -56,4 +56,13 @@ public:
 	float BigDataElement = 0.0f;
 
 	virtual bool IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const override;
+
+	UFUNCTION(Client, Unreliable)
+	void ClientRPCFunction(int32 IntParam);
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastRPCChangeLightColor(const FLinearColor& NewLightColor);
+
+	UFUNCTION(Server, Unreliable)
+	void ServerRPCChangeLightColor();
 };

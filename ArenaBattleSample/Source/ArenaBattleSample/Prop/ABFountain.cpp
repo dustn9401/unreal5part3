@@ -7,6 +7,8 @@
 #include "Components/PointLightComponent.h"
 #include "Net/UnrealNetwork.h"
 
+int32 num = 90;
+
 // Sets default values
 AABFountain::AABFountain()
 {
@@ -49,11 +51,15 @@ void AABFountain::BeginPlay()
 	if (HasAuthority())
 	{
 		{
+			num = 80;
 			FTimerHandle Handle;
 			GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
 			{
-				ServerLightColor = FLinearColor(FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), 1.0f);
-				OnRep_ServerLightColor();
+				// ServerLightColor = FLinearColor(FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), 1.0f);
+				// OnRep_ServerLightColor();
+				// FLinearColor NewColor(FLinearColor(FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), 1.0f));
+				// MulticastRPCChangeLightColor(NewColor);
+				// ClientRPCFunction(num++);
 			}), 1.0f, true, 0.0f);
 		}
 
@@ -63,8 +69,16 @@ void AABFountain::BeginPlay()
 			{
 				AB_LOG(LogABNetwork, Log, TEXT("Timer Called!!"));
 				FlushNetDormancy();
-			}), 10.0f, false, -1.0f);
+			}), 5.0f, false, -1.0f);
 		}
+	}
+	else
+	{
+		FTimerHandle Handle;
+		GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
+		{
+			ServerRPCChangeLightColor();
+		}), 1.0f, true, 0.0f);
 	}
 }
 
@@ -140,4 +154,26 @@ bool AABFountain::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewT
 	auto Ret = Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
 	// AB_LOG(LogABNetwork, Log, TEXT("IsNetRelevantFor=%d, RealViewer=%s, ViewTarget=%s"), Ret, *RealViewer->GetName(), *ViewTarget->GetName())
 	return Ret;
+}
+
+void AABFountain::ServerRPCChangeLightColor_Implementation()
+{
+	FLinearColor NewColor(FLinearColor(FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), 1.0f));
+	AB_LOG(LogABNetwork, Log, TEXT("Called: %s"), *NewColor.ToString());
+	MulticastRPCChangeLightColor(NewColor);
+}
+
+void AABFountain::MulticastRPCChangeLightColor_Implementation(const FLinearColor& NewLightColor)
+{
+	AB_LOG(LogABNetwork, Log, TEXT("Called: %s"), *NewLightColor.ToString());
+	UPointLightComponent* PointLight = Cast<UPointLightComponent>(GetComponentByClass(UPointLightComponent::StaticClass()));
+	if (PointLight)
+	{
+		PointLight->SetLightColor(NewLightColor);
+	}
+}
+
+void AABFountain::ClientRPCFunction_Implementation(int32 IntParam)
+{
+	AB_LOG(LogABNetwork, Log, TEXT("Called: %d"), IntParam);
 }
