@@ -30,8 +30,13 @@ public:
 	TObjectPtr<class UStaticMeshComponent> Water;
 
 public:
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing=OnRep_ServerRotationYaw)
 	float ServerRotationYaw;
 
+	UFUNCTION()
+	void OnRep_ServerRotationYaw();
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	virtual void OnActorChannelOpen(FInBunch& InBunch, UNetConnection* Connection) override;
 };
