@@ -39,4 +39,8 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void OnActorChannelOpen(FInBunch& InBunch, UNetConnection* Connection) override;
+
+	float RotationRate = 30.0f;
+	float ClientTimeSinceUpdate = 0.0f;		// 서버로부터 마지막으로 업데이트 받은 뒤에 얼마만큼의 시간이 지났는지
+	float ClientTimeBetweenLastUpdate = 0.0f;	// 마지막으로 업데이트 받았을 때의 인터벌 캐싱용
 };
