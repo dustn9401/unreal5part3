@@ -36,6 +36,7 @@ AABFountain::AABFountain()
 
 	bReplicates = true;
 	NetUpdateFrequency = 1.0f;
+	NetCullDistanceSquared = static_cast<float>(2000 * 2000);
 }
 
 // Called when the game starts or when spawned
@@ -59,10 +60,10 @@ void AABFountain::Tick(float DeltaTime)
 	{
 		ClientTimeSinceUpdate += DeltaTime;
 		if (ClientTimeBetweenLastUpdate < KINDA_SMALL_NUMBER) return;
-
+		
 		const float EstimateRotationYaw = ServerRotationYaw + RotationRate * ClientTimeBetweenLastUpdate;
 		const float LerpRatio = ClientTimeSinceUpdate / ClientTimeBetweenLastUpdate;
-
+		
 		FRotator ClientRotator = RootComponent->GetComponentRotation();
 		const float ClientNewYaw = FMath::Lerp(ServerRotationYaw, EstimateRotationYaw, LerpRatio);
 		ClientRotator.Yaw = ClientNewYaw;
@@ -94,4 +95,11 @@ void AABFountain::OnActorChannelOpen(FInBunch& InBunch, UNetConnection* Connecti
 	Super::OnActorChannelOpen(InBunch, Connection);
 	
 	AB_LOG(LogABNetwork, Log, TEXT("End"))
+}
+
+bool AABFountain::IsNetRelevantFor(const AActor* RealViewer, const AActor* ViewTarget, const FVector& SrcLocation) const
+{
+	auto Ret = Super::IsNetRelevantFor(RealViewer, ViewTarget, SrcLocation);
+	// AB_LOG(LogABNetwork, Log, TEXT("IsNetRelevantFor=%d, RealViewer=%s, ViewTarget=%s"), Ret, *RealViewer->GetName(), *ViewTarget->GetName())
+	return Ret;
 }
