@@ -70,7 +70,7 @@ protected:
 	void SetHp(float NewHp);
 
 	// Transient: 디스크에 저장하지 않음
-	UPROPERTY(Transient, VisibleInstanceOnly, Category=Stat)
+	UPROPERTY(ReplicatedUsing=OnRep_CurrentHp, Transient, VisibleInstanceOnly, Category=Stat)
 	float CurrentHp;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, Category=Stat)
@@ -85,4 +85,12 @@ protected:
 
 	UPROPERTY(Transient, VisibleInstanceOnly, Category=Stat, meta=(AllowPrivateAccess="true"))
 	FABCharacterStat ModifierStat;
+
+// Replication
+protected:
+	virtual void ReadyForReplication() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	UFUNCTION()
+	void OnRep_CurrentHp();
 };

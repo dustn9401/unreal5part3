@@ -4,11 +4,14 @@
 #include "CharacterStat/ABCharacterStatComponent.h"
 
 #include "GameData/ABGameSingleton.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
 UABCharacterStatComponent::UABCharacterStatComponent(): CurrentHp(0), CurrentLevelNumber(1), AttackRadius(50.0f)
 {
 	bWantsInitializeComponent = true;
+
+	SetIsReplicated(true);
 }
 
 void UABCharacterStatComponent::InitializeComponent()
@@ -45,4 +48,28 @@ void UABCharacterStatComponent::SetHp(float NewHp)
 {
 	CurrentHp = FMath::Clamp<float>(NewHp, 0.0f, GetTotalStat().MaxHp);
 	OnHpChanged.Broadcast(CurrentHp);
+}
+
+void UABCharacterStatComponent::ReadyForReplication()
+{
+	// InitializeComponent과 BeginPlay 사이에 호출되는 함수
+	Super::ReadyForReplication();
+
+}
+
+void UABCharacterStatComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UABCharacterStatComponent, CurrentHp);
+}
+
+void UABCharacterStatComponent::OnRep_CurrentHp()
+{
+	OnHpChanged.Broadcast(CurrentHp);
+	
+	if (CurrentHp <= KINDA_SMALL_NUMBER)
+	{
+		OnHpZero.Broadcast();
+	}
 }
