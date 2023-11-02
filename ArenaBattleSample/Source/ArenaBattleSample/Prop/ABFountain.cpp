@@ -59,7 +59,7 @@ void AABFountain::BeginPlay()
 			GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
 			{
 				ServerLightColor = FLinearColor(FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), 1.0f);
-				OnRep_ServerLightColor();
+				OnRep_ServerLightColor();	// 이 함수는 클라에서만 실행되기 때문에, 클라의 분수대 색깔만 바뀜. 그래서 서버는 직접 호출해준다.
 				// FLinearColor NewColor(FLinearColor(FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), 1.0f));
 				// MulticastRPCChangeLightColor(NewColor);
 				// ClientRPCFunction(num++);	// Owner를 갖기 전에는 Server만 업데이트 되고, 갖은 후에는 클라이언트만 업데이트 될것임
@@ -73,18 +73,16 @@ void AABFountain::BeginPlay()
 			// 	AB_LOG(LogABNetwork, Log, TEXT("Timer Called!!"));
 			//
 			// 	// FIXED: No owning connection for actor BP_Fountain_C_2. Function ServerRPCChangeLightColor will not be processed.
-			// 	// 이 분수대의 Owner만 Server RPC 함수를 호출할 수 있다.
+			// 	// 이 분수대의 Owner인 클라이언트 또는 이 분수대에 대한 Local Role이 Autonomous인 클라이언트만 Server RPC 함수를 호출할 수 있다.
 			// 	for(APlayerController* PlayerController : TActorRange<APlayerController>(GetWorld()))
 			// 	{
 			// 		if (PlayerController && !PlayerController->IsLocalPlayerController())
 			// 		{
 			// 			AB_LOG(LogABNetwork, Log, TEXT("SetOwner: %s"), *PlayerController->GetName());
 			// 			SetOwner(PlayerController);
-			// 			// SetRole(ROLE_AutonomousProxy);
 			// 			break;
 			// 		}
 			// 	}
-			//
 			// }), 10.0f, false, -1.0f);
 		}
 	}
@@ -93,6 +91,7 @@ void AABFountain::BeginPlay()
 		// FTimerHandle Handle;
 		// GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
 		// {
+		// 	ServerRPCChangeLightColor();
 		// }), 1.0f, true, 0.0f);
 	}
 }
@@ -161,8 +160,12 @@ void AABFountain::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	AB_LOG(LogABNetwork, Log, TEXT("Called"));
-	DOREPLIFETIME_CONDITION(AABFountain, ServerRotationYaw, COND_SimulatedOnly);
-	DOREPLIFETIME_CONDITION(AABFountain, ServerLightColor, COND_SimulatedOnly);
+	// DOREPLIFETIME_CONDITION(AABFountain, ServerRotationYaw, COND_SimulatedOnly);
+	// DOREPLIFETIME_CONDITION(AABFountain, ServerLightColor, COND_SimulatedOnly);
+
+	DOREPLIFETIME(AABFountain, ServerRotationYaw);
+	DOREPLIFETIME(AABFountain, ServerLightColor);
+	
 	// DOREPLIFETIME(AABFountain, BigData);
 }
 
@@ -182,27 +185,27 @@ void AABFountain::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 // 	return Ret;
 // }
 //
-// bool AABFountain::ServerRPCChangeLightColor_Validate()
-// {
-// 	return true;
-// }
+bool AABFountain::ServerRPCChangeLightColor_Validate()
+{
+	return true;
+}
+
+void AABFountain::ServerRPCChangeLightColor_Implementation()
+{
+	FLinearColor NewColor(FLinearColor(FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), 1.0f));
+	AB_LOG(LogABNetwork, Log, TEXT("Called: %s"), *NewColor.ToString());
+	MulticastRPCChangeLightColor(NewColor);
+}
 //
-// void AABFountain::ServerRPCChangeLightColor_Implementation()
-// {
-// 	// FLinearColor NewColor(FLinearColor(FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), 1.0f));
-// 	// AB_LOG(LogABNetwork, Log, TEXT("Called: %s"), *NewColor.ToString());
-// 	// MulticastRPCChangeLightColor(NewColor);
-// }
-//
-// void AABFountain::MulticastRPCChangeLightColor_Implementation(const FLinearColor& NewLightColor)
-// {
-// 	AB_LOG(LogABNetwork, Log, TEXT("Called: %s"), *NewLightColor.ToString());
-// 	UPointLightComponent* PointLight = Cast<UPointLightComponent>(GetComponentByClass(UPointLightComponent::StaticClass()));
-// 	if (PointLight)
-// 	{
-// 		PointLight->SetLightColor(NewLightColor);
-// 	}
-// }
+void AABFountain::MulticastRPCChangeLightColor_Implementation(const FLinearColor& NewLightColor)
+{
+	AB_LOG(LogABNetwork, Log, TEXT("Called: %s"), *NewLightColor.ToString());
+	UPointLightComponent* PointLight = Cast<UPointLightComponent>(GetComponentByClass(UPointLightComponent::StaticClass()));
+	if (PointLight)
+	{
+		PointLight->SetLightColor(NewLightColor);
+	}
+}
 //
 // void AABFountain::ClientRPCFunction_Implementation(int32 IntParam)
 // {

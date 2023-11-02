@@ -62,9 +62,9 @@ public:
 	// UFUNCTION(Client, Unreliable)
 	// void ClientRPCFunction(int32 IntParam);
 	//
-	// UFUNCTION(NetMulticast, Unreliable)
-	// void MulticastRPCChangeLightColor(const FLinearColor& NewLightColor);
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastRPCChangeLightColor(const FLinearColor& NewLightColor);
 	//
-	// UFUNCTION(Server, Unreliable, WithValidation)
-	// void ServerRPCChangeLightColor();
+	UFUNCTION(Server, Unreliable, WithValidation)
+	void ServerRPCChangeLightColor();
 };
