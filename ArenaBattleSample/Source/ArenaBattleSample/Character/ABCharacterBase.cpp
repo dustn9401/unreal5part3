@@ -304,6 +304,9 @@ void AABCharacterBase::OnRep_CanAttack()
 
 void AABCharacterBase::AttackHitCheck()
 {
+	if (!HasAuthority()) return;
+	AB_LOG(LogABNetwork, Log, TEXT("Called"))
+	
 	TArray<FHitResult> OutHitResults;
 	FCollisionQueryParams Params(SCENE_QUERY_STAT(Attack), false, this);
 

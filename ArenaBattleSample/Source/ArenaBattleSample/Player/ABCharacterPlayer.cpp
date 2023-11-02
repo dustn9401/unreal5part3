@@ -270,8 +270,9 @@ void AABCharacterPlayer::AttackByInput()
 
 bool AABCharacterPlayer::CanHit(const FHitResult& HitResult)
 {
-	AABCharacterNonPlayer* NonPlayerCharacter = Cast<AABCharacterNonPlayer>(HitResult.GetActor());
-	return NonPlayerCharacter != nullptr;	// 플레이어가 아닌 캐릭터만 공격 가능
+	return true;
+	// AABCharacterNonPlayer* NonPlayerCharacter = Cast<AABCharacterNonPlayer>(HitResult.GetActor());
+	// return NonPlayerCharacter != nullptr;	// 플레이어가 아닌 캐릭터만 공격 가능
 }
 
 void AABCharacterPlayer::SetDead()
