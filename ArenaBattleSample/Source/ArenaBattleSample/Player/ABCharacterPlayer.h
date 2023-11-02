@@ -76,7 +76,9 @@ protected:
 
 	ECharacterControlType CurrentCharacterControlType;
 
-	void Attack();
+// Attack Section
+	virtual void AttackByInput();
+	
 	virtual bool CanHit(const FHitResult& HitResult) override;
 
 	virtual void SetDead() override;

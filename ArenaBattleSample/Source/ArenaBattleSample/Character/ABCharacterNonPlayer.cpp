@@ -82,7 +82,9 @@ float AABCharacterNonPlayer::GetAITurnSpeed()
 
 void AABCharacterNonPlayer::AttackByAI()
 {
-	ProcessComboCommand();
+	// ProcessComboCommand();
+
+	Attack();
 }
 
 void AABCharacterNonPlayer::SetAIAttackDelegate(const FAICharacterAttackFinished& InOnAttackFinished)

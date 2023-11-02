@@ -143,10 +143,10 @@ void AABFountain::OnRep_ServerLightColor()
 	// 	AB_LOG(LogABNetwork, Log, TEXT("No NetConnection"));
 	// }
 	
-	if (!HasAuthority())
-	{
-		AB_LOG(LogABNetwork, Log, TEXT("Color: %s"), *ServerLightColor.ToString());
-	}
+	// if (!HasAuthority())
+	// {
+	// 	AB_LOG(LogABNetwork, Log, TEXT("Color: %s"), *ServerLightColor.ToString());
+	// }
 
 	UPointLightComponent* PointLight = Cast<UPointLightComponent>(GetComponentByClass(UPointLightComponent::StaticClass()));
 	if (PointLight)

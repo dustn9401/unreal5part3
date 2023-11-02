@@ -5,6 +5,7 @@
 
 #include "ABCharacterControlData.h"
 #include "ABComboActionData.h"
+#include "ArenaBattleSample.h"
 #include "CharacterStat/ABCharacterStatComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
@@ -12,6 +13,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Item/ABItemData.h"
 #include "Item/ABItems.h"
+#include "Net/UnrealNetwork.h"
 #include "Physics/ABCollision.h"
 #include "UI/ABHpBarWidget.h"
 #include "UI/ABUserWidget.h"
@@ -234,6 +236,69 @@ void AABCharacterBase::ComboCheck()
 		SetComboCheckTimerIfPossible();
 		
 		HasNextComboCommand = false;
+	}
+}
+
+void AABCharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AABCharacterBase, bCanAttack);
+}
+
+void AABCharacterBase::Attack()
+{
+	// ProcessComboCommand();
+
+	if (bCanAttack)
+	{
+		ServerRPCAttack();
+	}
+}
+
+void AABCharacterBase::ServerRPCAttack_Implementation()
+{
+	AB_LOG(LogABNetwork, Log, TEXT("Called"));
+	MulticastRPCAttack();
+}
+
+bool AABCharacterBase::ServerRPCAttack_Validate()
+{
+	return true;
+}
+
+void AABCharacterBase::MulticastRPCAttack_Implementation()
+{
+	AB_LOG(LogABNetwork, Log, TEXT("Called"));
+	
+	// 서버
+	if (HasAuthority())
+	{
+		bCanAttack = false;
+		OnRep_CanAttack();
+		
+		FTimerHandle Handle;
+		GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
+		{
+			bCanAttack = true;
+			OnRep_CanAttack();
+		}), AttackTime, false, -1.0f);
+	}
+
+	// 공통
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(ComboActionMontage);
+}
+
+void AABCharacterBase::OnRep_CanAttack()
+{
+	if (!bCanAttack)
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_None);
+	}
+	else
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	}
 }
 

@@ -182,7 +182,7 @@ void AABCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(ShoulderMoveAction, ETriggerEvent::Triggered, this, &AABCharacterPlayer::ShoulderMove);
 	EnhancedInputComponent->BindAction(ShoulderLookAction, ETriggerEvent::Triggered, this, &AABCharacterPlayer::ShoulderLook);
 	EnhancedInputComponent->BindAction(QuarterMoveAction, ETriggerEvent::Triggered, this, &AABCharacterPlayer::QuarterMove);
-	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AABCharacterPlayer::Attack);
+	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AABCharacterPlayer::AttackByInput);
 }
 
 void AABCharacterPlayer::ChangeCharacterControl()
@@ -263,25 +263,9 @@ void AABCharacterPlayer::QuarterMove(const FInputActionValue& Value)
 	AddMovementInput(MoveDirection, MovementVectorSize);
 }
 
-void AABCharacterPlayer::Attack()
+void AABCharacterPlayer::AttackByInput()
 {
-	// ProcessComboCommand();
-
-	if (bCanAttack)
-	{
-		bCanAttack = false;
-		GetCharacterMovement()->SetMovementMode(MOVE_None);
-		
-		FTimerHandle Handle;
-		GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
-		{
-			bCanAttack = true;
-			GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-		}), AttackTime, false, -1.0f);
-
-		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-		AnimInstance->Montage_Play(ComboActionMontage);
-	}
+	Attack();
 }
 
 bool AABCharacterPlayer::CanHit(const FHitResult& HitResult)

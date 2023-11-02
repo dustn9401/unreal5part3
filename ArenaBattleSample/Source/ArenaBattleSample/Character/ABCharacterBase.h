@@ -73,8 +73,25 @@ protected:
 	FTimerHandle ComboTimerHandle;
 	bool HasNextComboCommand = false;
 
+	// Attack RPCs
+
+	void Attack();
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerRPCAttack();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCAttack();
+
+	UPROPERTY(ReplicatedUsing=OnRep_CanAttack)
 	uint8 bCanAttack : 1;
+	
 	float AttackTime = 1.4667f;
+
+	UFUNCTION()
+	void OnRep_CanAttack();
 
 // Attack Hit
 protected:
