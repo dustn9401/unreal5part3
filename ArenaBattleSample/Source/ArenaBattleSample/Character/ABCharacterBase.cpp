@@ -127,6 +127,8 @@ AABCharacterBase::AABCharacterBase()
 	// Weapon
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
 	Weapon->SetupAttachment(GetMesh(), TEXT("hand_rSocket"));
+
+	bCanAttack = true;
 }
 
 void AABCharacterBase::PostInitializeComponents()

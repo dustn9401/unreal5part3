@@ -53,39 +53,40 @@ void AABFountain::BeginPlay()
 	{
 		FlushNetDormancy();
 		
-		// {
-		// 	num = 80;
-		// 	FTimerHandle Handle;
-		// 	GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
-		// 	{
-		// 		// ServerLightColor = FLinearColor(FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), 1.0f);
-		// 		// OnRep_ServerLightColor();
-		// 		// FLinearColor NewColor(FLinearColor(FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), 1.0f));
-		// 		// MulticastRPCChangeLightColor(NewColor);
-		// 		ClientRPCFunction(num++);	// Owner를 갖기 전에는 Server만 업데이트 되고, 갖은 후에는 클라이언트만 업데이트 될것임
-		// 	}), 1.0f, true, 0.0f);
-		// }
-		//
-		// {
-		// 	FTimerHandle Handle;
-		// 	GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
-		// 	{
-		// 		AB_LOG(LogABNetwork, Log, TEXT("Timer Called!!"));
-		//
-		// 		// FIXED: No owning connection for actor BP_Fountain_C_2. Function ServerRPCChangeLightColor will not be processed.
-		// 		// 이 분수대의 Owner만 Server RPC 함수를 호출할 수 있다.
-		// 		for(APlayerController* PlayerController : TActorRange<APlayerController>(GetWorld()))
-		// 		{
-		// 			if (PlayerController && !PlayerController->IsLocalPlayerController())
-		// 			{
-		// 				AB_LOG(LogABNetwork, Log, TEXT("SetOwner: %s"), *PlayerController->GetName());
-		// 				SetOwner(PlayerController);
-		// 				break;
-		// 			}
-		// 		}
-		//
-		// 	}), 10.0f, false, -1.0f);
-		// }
+		{
+			num = 80;
+			FTimerHandle Handle;
+			GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
+			{
+				ServerLightColor = FLinearColor(FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), 1.0f);
+				OnRep_ServerLightColor();
+				// FLinearColor NewColor(FLinearColor(FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), FMath::RandRange(0.0f, 1.0f), 1.0f));
+				// MulticastRPCChangeLightColor(NewColor);
+				// ClientRPCFunction(num++);	// Owner를 갖기 전에는 Server만 업데이트 되고, 갖은 후에는 클라이언트만 업데이트 될것임
+			}), 1.0f, true, 0.0f);
+		}
+		
+		{
+			// FTimerHandle Handle;
+			// GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
+			// {
+			// 	AB_LOG(LogABNetwork, Log, TEXT("Timer Called!!"));
+			//
+			// 	// FIXED: No owning connection for actor BP_Fountain_C_2. Function ServerRPCChangeLightColor will not be processed.
+			// 	// 이 분수대의 Owner만 Server RPC 함수를 호출할 수 있다.
+			// 	for(APlayerController* PlayerController : TActorRange<APlayerController>(GetWorld()))
+			// 	{
+			// 		if (PlayerController && !PlayerController->IsLocalPlayerController())
+			// 		{
+			// 			AB_LOG(LogABNetwork, Log, TEXT("SetOwner: %s"), *PlayerController->GetName());
+			// 			SetOwner(PlayerController);
+			// 			// SetRole(ROLE_AutonomousProxy);
+			// 			break;
+			// 		}
+			// 	}
+			//
+			// }), 10.0f, false, -1.0f);
+		}
 	}
 	else
 	{
@@ -133,6 +134,16 @@ void AABFountain::OnRep_ServerRotationYaw()
 
 void AABFountain::OnRep_ServerLightColor()
 {
+	// 프로퍼티 리플리케이션은 NetConnection 및 Owner 유무에 상관 없이 수행된다.
+	// if (GetNetConnection())
+	// {
+	// 	AB_LOG(LogABNetwork, Log, TEXT("NetCOnnection: %s"), *GetNetConnection()->GetName());
+	// }
+	// else
+	// {
+	// 	AB_LOG(LogABNetwork, Log, TEXT("No NetConnection"));
+	// }
+	
 	if (!HasAuthority())
 	{
 		AB_LOG(LogABNetwork, Log, TEXT("Color: %s"), *ServerLightColor.ToString());
@@ -149,8 +160,9 @@ void AABFountain::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AABFountain, ServerRotationYaw);
-	DOREPLIFETIME(AABFountain, ServerLightColor);
+	AB_LOG(LogABNetwork, Log, TEXT("Called"));
+	DOREPLIFETIME_CONDITION(AABFountain, ServerRotationYaw, COND_SimulatedOnly);
+	DOREPLIFETIME_CONDITION(AABFountain, ServerLightColor, COND_SimulatedOnly);
 	// DOREPLIFETIME(AABFountain, BigData);
 }
 

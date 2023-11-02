@@ -73,6 +73,9 @@ protected:
 	FTimerHandle ComboTimerHandle;
 	bool HasNextComboCommand = false;
 
+	uint8 bCanAttack : 1;
+	float AttackTime = 1.4667f;
+
 // Attack Hit
 protected:
 	virtual void AttackHitCheck() override;

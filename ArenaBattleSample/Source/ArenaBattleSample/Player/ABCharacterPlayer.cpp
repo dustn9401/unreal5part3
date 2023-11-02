@@ -11,6 +11,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Character/ABCharacterControlData.h"
 #include "Character/ABCharacterNonPlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Interface/ABGameInterface.h"
 #include "Physics/ABCollision.h"
 #include "UI/ABHpBarWidget.h"
@@ -264,7 +265,23 @@ void AABCharacterPlayer::QuarterMove(const FInputActionValue& Value)
 
 void AABCharacterPlayer::Attack()
 {
-	ProcessComboCommand();
+	// ProcessComboCommand();
+
+	if (bCanAttack)
+	{
+		bCanAttack = false;
+		GetCharacterMovement()->SetMovementMode(MOVE_None);
+		
+		FTimerHandle Handle;
+		GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
+		{
+			bCanAttack = true;
+			GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		}), AttackTime, false, -1.0f);
+
+		UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+		AnimInstance->Montage_Play(ComboActionMontage);
+	}
 }
 
 bool AABCharacterPlayer::CanHit(const FHitResult& HitResult)
