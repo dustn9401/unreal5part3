@@ -46,6 +46,8 @@ public:
 
 	virtual void PostInitializeComponents() override;
 
+	virtual void BeginPlay() override;
+
 protected:
 	virtual void SetCharacterControlData(const class UABCharacterControlData* CharacterControlData);
 

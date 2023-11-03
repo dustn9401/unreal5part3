@@ -142,6 +142,12 @@ void AABCharacterBase::PostInitializeComponents()
 	// 여기는 아직 위젯이 생성되기 전이라서, 위젯을 세팅할 수 없음
 }
 
+void AABCharacterBase::BeginPlay()
+{
+	AB_LOG(LogABNetwork, Log, TEXT("Start"))
+	Super::BeginPlay();
+}
+
 void AABCharacterBase::SetCharacterControlData(const UABCharacterControlData* CharacterControlData)
 {
 	// Pawn

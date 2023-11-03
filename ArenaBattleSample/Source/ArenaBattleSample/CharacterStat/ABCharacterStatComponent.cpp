@@ -3,6 +3,7 @@
 
 #include "CharacterStat/ABCharacterStatComponent.h"
 
+#include "ArenaBattleSample.h"
 #include "GameData/ABGameSingleton.h"
 #include "Net/UnrealNetwork.h"
 
@@ -11,7 +12,8 @@ UABCharacterStatComponent::UABCharacterStatComponent(): CurrentHp(0), CurrentLev
 {
 	bWantsInitializeComponent = true;
 
-	SetIsReplicated(true);
+	// SetIsReplicated(true);
+	SetIsReplicatedByDefault(true);
 }
 
 void UABCharacterStatComponent::InitializeComponent()
@@ -32,27 +34,26 @@ void UABCharacterStatComponent::SetLevelStat(int32 InNewLevelNumber)
 
 float UABCharacterStatComponent::ApplyDamage(float InDamage)
 {
+	// 서버에서만 호출될 수 있는 함수
 	const float PrevHp = CurrentHp;
 	const float ActualDamage = FMath::Clamp<float>(InDamage, 0, InDamage);
 	
 	SetHp(PrevHp - ActualDamage);
-	if (CurrentHp <= KINDA_SMALL_NUMBER)
-	{
-		OnHpZero.Broadcast();
-	}
 
 	return ActualDamage;
 }
 
 void UABCharacterStatComponent::SetHp(float NewHp)
 {
+	// 서버에서만 호출될 수 있는 함수
 	CurrentHp = FMath::Clamp<float>(NewHp, 0.0f, GetTotalStat().MaxHp);
-	OnHpChanged.Broadcast(CurrentHp);
+	OnRep_CurrentHp();
 }
 
 void UABCharacterStatComponent::ReadyForReplication()
 {
 	// InitializeComponent과 BeginPlay 사이에 호출되는 함수
+	AB_SUB_LOG(LogABNetwork, Log, TEXT("Start"));
 	Super::ReadyForReplication();
 
 }
@@ -66,6 +67,7 @@ void UABCharacterStatComponent::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 
 void UABCharacterStatComponent::OnRep_CurrentHp()
 {
+	AB_SUB_LOG(LogABNetwork, Log, TEXT("Start"));
 	OnHpChanged.Broadcast(CurrentHp);
 	
 	if (CurrentHp <= KINDA_SMALL_NUMBER)
