@@ -10,6 +10,7 @@
 
 AABCharacterNonPlayer::AABCharacterNonPlayer()
 {
+	TeamType = ECharacterTeamType::Blue;
 	GetMesh()->SetHiddenInGame(true);
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	AIControllerClass = AABAIController::StaticClass();

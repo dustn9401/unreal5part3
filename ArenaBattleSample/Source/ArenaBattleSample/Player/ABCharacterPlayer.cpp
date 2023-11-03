@@ -20,6 +20,8 @@
 
 AABCharacterPlayer::AABCharacterPlayer()
 {
+	TeamType = ECharacterTeamType::Red;
+	
 	// =============================== Camera 설정 =======================================
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);

@@ -7,11 +7,18 @@
 #include "Interface/ABAnimationAttackInterface.h"
 #include "Interface/ABCharacterItemInterface.h"
 #include "Interface/ABCharacterWidgetInterface.h"
-#include "functional"
 #include "CharacterStat/ABCharacterStatComponent.h"
 #include "ABCharacterBase.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogABCharacter, Log, All);
+
+UENUM()
+enum class ECharacterTeamType : uint8
+{
+	Red = 0b01,
+	Blue = 0b10,
+	All = 0b11
+};
 
 UENUM()
 enum class ECharacterControlType : uint8
@@ -47,6 +54,11 @@ public:
 	virtual void PostInitializeComponents() override;
 
 	virtual void BeginPlay() override;
+	
+// Team Info
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Team)
+	ECharacterTeamType TeamType;
 
 protected:
 	virtual void SetCharacterControlData(const class UABCharacterControlData* CharacterControlData);
@@ -77,6 +89,8 @@ protected:
 
 	void Attack();
 
+	void AttackHitConfirm(const FHitResult& HitResult);
+
 	void PlayAttackAnimation();
 	
 	// Attack RPCs
@@ -90,15 +104,30 @@ protected:
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastRPCAttack();
 
+	UFUNCTION(Client, Unreliable)
+	void ClientRPCPlayAnimation(AABCharacterBase* CharacterToPlay);
+
 	UPROPERTY(ReplicatedUsing=OnRep_CanAttack)
 	uint8 bCanAttack : 1;
 	
 	float AttackTime = 1.4667f;
 	float LastAttackStartTime = 0.0f;	// 마지막으로 공격한 시간 기록용
 	float AttackTimeDifference = 0.0f;	// 서버와의 공격 시간 차이 기록용
+	float AcceptCheckDistance = 300.0f;	// 허용 가능한 최대 근접 공격 거리
 
 	UFUNCTION()
 	void OnRep_CanAttack();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerRPCNotifyHit(const TArray<FHitResult>& OutHitResults, float HitCheckTime);
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerRPCNotifyMiss(FVector_NetQuantize TraceStart, FVector_NetQuantize TraceEnd, FVector_NetQuantizeNormal TraceDir, float HitCheckTime);
+
+	UPROPERTY(Replicated)
+	TArray<float> BigData;
+
+	float BigDataItem = 0.0f;
 
 // Attack Hit
 protected:
