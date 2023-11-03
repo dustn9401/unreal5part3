@@ -75,22 +75,27 @@ protected:
 	FTimerHandle ComboTimerHandle;
 	bool HasNextComboCommand = false;
 
+	void Attack();
+
+	void PlayAttackAnimation();
+	
 	// Attack RPCs
 
-	void Attack();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerRPCAttack();
+	void ServerRPCAttack(float AttackStartTime);
 
-	UFUNCTION(NetMulticast, Reliable)
+	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastRPCAttack();
 
 	UPROPERTY(ReplicatedUsing=OnRep_CanAttack)
 	uint8 bCanAttack : 1;
 	
 	float AttackTime = 1.4667f;
+	float LastAttackStartTime = 0.0f;	// 마지막으로 공격한 시간 기록용
+	float AttackTimeDifference = 0.0f;	// 서버와의 공격 시간 차이 기록용
 
 	UFUNCTION()
 	void OnRep_CanAttack();

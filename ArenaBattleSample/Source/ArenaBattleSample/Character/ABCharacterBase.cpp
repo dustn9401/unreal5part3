@@ -11,6 +11,7 @@
 #include "Components/WidgetComponent.h"
 #include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/GameStateBase.h"
 #include "Item/ABItemData.h"
 #include "Item/ABItems.h"
 #include "Net/UnrealNetwork.h"
@@ -258,42 +259,71 @@ void AABCharacterBase::Attack()
 
 	if (bCanAttack)
 	{
-		ServerRPCAttack();
+		// 타이머 설정, 몽타주 재생을 클라에 맡긴다.
+		if (!HasAuthority())
+		{
+			bCanAttack = false;
+			GetCharacterMovement()->SetMovementMode(MOVE_None);
+		
+			FTimerHandle Handle;
+			GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
+			{
+				bCanAttack = true;
+				GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+			}), AttackTime, false, -1.0f);
+
+			PlayAttackAnimation();
+		}
+		
+		ServerRPCAttack(GetWorld()->GetGameState()->GetServerWorldTimeSeconds());
 	}
 }
 
-void AABCharacterBase::ServerRPCAttack_Implementation()
+void AABCharacterBase::PlayAttackAnimation()
+{
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	AnimInstance->StopAllMontages(0.0f);
+	AnimInstance->Montage_Play(ComboActionMontage);
+}
+
+void AABCharacterBase::ServerRPCAttack_Implementation(float AttackStartTime)
 {
 	AB_LOG(LogABNetwork, Log, TEXT("Called"));
+	
+	bCanAttack = false;
+	OnRep_CanAttack();
+
+	AttackTimeDifference = GetWorld()->GetTimeSeconds() - AttackStartTime;
+	AB_LOG(LogABNetwork, Log, TEXT("AttackTimeDiff: %f"), AttackTimeDifference);
+	AttackTimeDifference = FMath::Clamp(AttackTimeDifference, 0.0f, AttackTime - 0.01f);
+		
+	FTimerHandle Handle;
+	GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
+	{
+		bCanAttack = true;
+		OnRep_CanAttack();
+	}), AttackTime - AttackTimeDifference, false, -1.0f);
+
+	LastAttackStartTime = AttackStartTime;
+	
 	MulticastRPCAttack();
 }
 
-bool AABCharacterBase::ServerRPCAttack_Validate()
+bool AABCharacterBase::ServerRPCAttack_Validate(float AttackStartTime)
 {
+	if (LastAttackStartTime == 0.0f) return true;
+
+	if (AttackStartTime - LastAttackStartTime < AttackTime) return false;
+	
 	return true;
 }
 
 void AABCharacterBase::MulticastRPCAttack_Implementation()
 {
-	AB_LOG(LogABNetwork, Log, TEXT("Called"));
-	
-	// 서버
-	if (HasAuthority())
+	if (!IsLocallyControlled())
 	{
-		bCanAttack = false;
-		OnRep_CanAttack();
-		
-		FTimerHandle Handle;
-		GetWorld()->GetTimerManager().SetTimer(Handle, FTimerDelegate::CreateLambda([&]
-		{
-			bCanAttack = true;
-			OnRep_CanAttack();
-		}), AttackTime, false, -1.0f);
+		PlayAttackAnimation();
 	}
-
-	// 공통
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	AnimInstance->Montage_Play(ComboActionMontage);
 }
 
 void AABCharacterBase::OnRep_CanAttack()
