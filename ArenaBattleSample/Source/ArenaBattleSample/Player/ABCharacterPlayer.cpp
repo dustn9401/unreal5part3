@@ -220,6 +220,8 @@ void AABCharacterPlayer::SetCharacterControl(const ECharacterControlType NewChar
 
 void AABCharacterPlayer::ShoulderMove(const FInputActionValue& Value)
 {
+	if (!bCanAttack) return;
+	
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	const FRotator Rotation = Controller->GetControlRotation();
@@ -245,6 +247,8 @@ void AABCharacterPlayer::ShoulderLook(const FInputActionValue& Value)
 
 void AABCharacterPlayer::QuarterMove(const FInputActionValue& Value)
 {
+	if (!bCanAttack) return;
+	
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	float InputSizeSquared = MovementVector.SquaredLength();
