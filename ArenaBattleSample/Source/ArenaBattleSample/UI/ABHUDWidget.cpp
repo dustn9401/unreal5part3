@@ -31,10 +31,9 @@ void UABHUDWidget::UpdateStat(const FABCharacterStat& BaseStat, const FABCharact
 {
 	auto TotalStat = BaseStat + ModifierStat;
 	CharacterStat->UpdateStat(BaseStat, ModifierStat);
-	HpBar->UpdateStat(BaseStat, ModifierStat);
 }
 
-void UABHUDWidget::UpdateHpBar(float NewCurrentHp)
+void UABHUDWidget::UpdateHpBar(float NewCurrentHp, float NewMaxHp)
 {
-	HpBar->UpdateHpBar(NewCurrentHp);
+	HpBar->UpdateHpBar(NewCurrentHp, NewMaxHp);
 }

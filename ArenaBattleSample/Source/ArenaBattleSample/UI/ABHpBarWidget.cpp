@@ -29,26 +29,10 @@ void UABHpBarWidget::NativeConstruct()
 	}
 }
 
-void UABHpBarWidget::UpdateStat(const FABCharacterStat& BaseStat, const FABCharacterStat& ModifierStat)
+void UABHpBarWidget::UpdateHpBar(float NewCurrentHp, float NewMaxHp)
 {
-	const FABCharacterStat TotalStat = BaseStat + ModifierStat;
-	MaxHp = TotalStat.MaxHp;
-
-	if (MaxHpText)
-	{
-		MaxHpText->SetText(FText::FromString(FString::Printf(TEXT("%d"), FMath::RoundToInt(MaxHp))));
-	}
-	
-	if (HpProgressBar)
-	{
-		HpProgressBar->SetPercent(CurrentHp / MaxHp);
-	}
-}
-
-void UABHpBarWidget::UpdateHpBar(float NewCurrentHp)
-{
-	ensureMsgf(MaxHp > 0.0f, TEXT("UABHpBarWidget::UpdateStat() 을 먼저 호출해주세요"));
 	CurrentHp = NewCurrentHp;
+	MaxHp = NewMaxHp;
 	
 	if (CurrentHpText)
 	{

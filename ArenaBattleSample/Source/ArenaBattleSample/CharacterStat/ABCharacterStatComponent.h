@@ -8,7 +8,7 @@
 #include "ABCharacterStatComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnHpZeroDelegate)
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHpChangedDelegate, float /*CurrentHp*/)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHpChangedDelegate, float /*CurrentHp*/, float /*MaxHp*/)
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStatChangedDelegate, const FABCharacterStat& /*BaseStat*/, const FABCharacterStat& /*ModifierStat*/)
 
 
@@ -23,7 +23,7 @@ public:
 
 protected:
 	virtual void InitializeComponent() override;
-
+	
 public:
 	FOnHpZeroDelegate OnHpZero;
 	FOnHpChangedDelegate OnHpChanged;
@@ -37,27 +37,31 @@ public:
 	FORCEINLINE const FABCharacterStat& GetBaseStat() const {return BaseStat;}
 	FORCEINLINE void AddBaseStat(const FABCharacterStat& InAddBaseStat)
 	{
+		ensureMsgf(GetOwner()->HasAuthority(), TEXT("GetOwner()->HasAuthority() false!!"));
 		BaseStat += InAddBaseStat;
-		OnStatChanged.Broadcast(BaseStat, ModifierStat);
+		OnRep_BaseStat();
 	}
 	
 	FORCEINLINE void SetBaseStat(const FABCharacterStat& InBaseStat)
 	{
+		ensureMsgf(GetOwner()->HasAuthority(), TEXT("GetOwner()->HasAuthority() false!!"));
 		BaseStat = InBaseStat;
-		OnStatChanged.Broadcast(BaseStat, ModifierStat);
+		OnRep_BaseStat();
 	}
 	
 	// modifier stat
 	FORCEINLINE const FABCharacterStat& GetModifierStat() const {return ModifierStat;}
 	FORCEINLINE void SetModifierStat(const FABCharacterStat& InModifierStat)
 	{
+		ensureMsgf(GetOwner()->HasAuthority(), TEXT("GetOwner()->HasAuthority() false!!"));
 		ModifierStat = InModifierStat;
-		OnStatChanged.Broadcast(BaseStat, ModifierStat);
+		OnRep_ModifierStat();
 	}
 
 	// HP
 	FORCEINLINE float GetCurrentHp() const {return CurrentHp;}
-	FORCEINLINE void HealHp(float InHealAmount) { SetHp(CurrentHp + InHealAmount); }
+	FORCEINLINE float GetMaxHp() const {return MaxHp;}
+	FORCEINLINE void HealHp(float InHealAmount) { SetCurrentHp(CurrentHp + InHealAmount); }
 
 	
 	FORCEINLINE FABCharacterStat GetTotalStat() const {return BaseStat + ModifierStat;}
@@ -67,11 +71,15 @@ public:
 	float ApplyDamage(float InDamage);
 
 protected:
-	void SetHp(float NewHp);
+	void SetCurrentHp(float NewHp);
+	void SetMaxHp(float NewMaxHp);
 
 	// Transient: 디스크에 저장하지 않음
 	UPROPERTY(ReplicatedUsing=OnRep_CurrentHp, Transient, VisibleInstanceOnly, Category=Stat)
 	float CurrentHp;
+
+	UPROPERTY(ReplicatedUsing=OnRep_MaxHp, Transient, VisibleInstanceOnly, Category=Stat)
+	float MaxHp;
 
 	UPROPERTY(Transient, VisibleInstanceOnly, Category=Stat)
 	float CurrentLevelNumber;
@@ -86,12 +94,6 @@ protected:
 	UPROPERTY(ReplicatedUsing=OnRep_ModifierStat, Transient, VisibleInstanceOnly, Category=Stat, meta=(AllowPrivateAccess="true"))
 	FABCharacterStat ModifierStat;
 
-	UFUNCTION()
-	void OnRep_BaseStat();
-
-	UFUNCTION()
-	void OnRep_ModifierStat();
-
 // Replication
 protected:
 	virtual void ReadyForReplication() override;
@@ -99,4 +101,13 @@ protected:
 	
 	UFUNCTION()
 	void OnRep_CurrentHp();
+
+	UFUNCTION()
+	void OnRep_MaxHp();
+
+	UFUNCTION()
+	void OnRep_BaseStat();
+
+	UFUNCTION()
+	void OnRep_ModifierStat();
 };

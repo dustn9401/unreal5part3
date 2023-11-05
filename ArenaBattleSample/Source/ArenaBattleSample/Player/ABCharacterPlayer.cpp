@@ -315,7 +315,7 @@ void AABCharacterPlayer::SetupHUDWidget(UABHUDWidget* InHUDWidget)
 		
 		// HUD의 HpBar는 캐릭터와 무관하기 때문에, NativeConstruct() 에서 AABCharacterBase::SetCharacterWidget() 가 호출되지 않음
 		// 그래서 여기서 딜리게이트를 등록해줘야 함
-		InHUDWidget->UpdateHpBar(Stat->GetCurrentHp());
+		InHUDWidget->UpdateHpBar(Stat->GetCurrentHp(), Stat->GetMaxHp());
 		Stat->OnHpChanged.AddUObject(InHUDWidget, &UABHUDWidget::UpdateHpBar);
 	}
 }
