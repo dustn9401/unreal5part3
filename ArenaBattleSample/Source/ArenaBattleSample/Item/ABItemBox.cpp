@@ -39,6 +39,8 @@ AABItemBox::AABItemBox()
 		Effect->SetTemplate(EffectRef.Object);
 		Effect->bAutoActivate = false;
 	}
+
+	bReplicates = true;
 }
 
 void AABItemBox::PostInitializeComponents()

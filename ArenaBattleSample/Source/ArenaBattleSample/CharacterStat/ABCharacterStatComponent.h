@@ -80,11 +80,17 @@ protected:
 	float AttackRadius;		// Sweep에 사용되는 sphere의 반지름
 
 protected:
-	UPROPERTY(Transient, VisibleInstanceOnly, Category=Stat, meta=(AllowPrivateAccess="true"))
+	UPROPERTY(ReplicatedUsing=OnRep_BaseStat, Transient, VisibleInstanceOnly, Category=Stat, meta=(AllowPrivateAccess="true"))
 	FABCharacterStat BaseStat;
 
-	UPROPERTY(Transient, VisibleInstanceOnly, Category=Stat, meta=(AllowPrivateAccess="true"))
+	UPROPERTY(ReplicatedUsing=OnRep_ModifierStat, Transient, VisibleInstanceOnly, Category=Stat, meta=(AllowPrivateAccess="true"))
 	FABCharacterStat ModifierStat;
+
+	UFUNCTION()
+	void OnRep_BaseStat();
+
+	UFUNCTION()
+	void OnRep_ModifierStat();
 
 // Replication
 protected:

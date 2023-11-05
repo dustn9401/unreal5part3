@@ -50,6 +50,18 @@ void UABCharacterStatComponent::SetHp(float NewHp)
 	OnRep_CurrentHp();
 }
 
+void UABCharacterStatComponent::OnRep_BaseStat()
+{
+	AB_SUB_LOG(LogABNetwork, Log, TEXT("Start"));
+	OnStatChanged.Broadcast(BaseStat, ModifierStat);
+}
+
+void UABCharacterStatComponent::OnRep_ModifierStat()
+{
+	AB_SUB_LOG(LogABNetwork, Log, TEXT("Start"));
+	OnStatChanged.Broadcast(BaseStat, ModifierStat);
+}
+
 void UABCharacterStatComponent::ReadyForReplication()
 {
 	// InitializeComponent과 BeginPlay 사이에 호출되는 함수
@@ -63,6 +75,8 @@ void UABCharacterStatComponent::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(UABCharacterStatComponent, CurrentHp);
+	DOREPLIFETIME(UABCharacterStatComponent, BaseStat);
+	DOREPLIFETIME(UABCharacterStatComponent, ModifierStat);
 }
 
 void UABCharacterStatComponent::OnRep_CurrentHp()
