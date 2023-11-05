@@ -323,17 +323,10 @@ void AABCharacterPlayer::SetupHUDWidget(UABHUDWidget* InHUDWidget)
 void AABCharacterPlayer::Teleport()
 {
 	// 현재 컨트롤러의 Yaw 방향으로 텔레포트
-	const FRotator CurrentRotation = GetController()->GetControlRotation();
-	constexpr float TeleportDistance = 300.0f;
+	UABCharacterMovementComponent* ABMovementComponent = Cast<UABCharacterMovementComponent>(GetCharacterMovement());
+	if (!ABMovementComponent) return;
 
-	const FRotator YawRotation(0.0f, CurrentRotation.Yaw, 0.0f);
-
-	const FQuat QuatRotation = YawRotation.Quaternion().GetNormalized();
-	const FVector Direction = QuatRotation.GetForwardVector();
-	const FVector MoveVector = Direction * TeleportDistance;
-	FVector DestLoc = GetActorLocation() + MoveVector;
-
-	
+	ABMovementComponent->SetTeleportCommand();
 }
 
 void AABCharacterPlayer::SetCharacterControlData(const UABCharacterControlData* CharacterControlData)
