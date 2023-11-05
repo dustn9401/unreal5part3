@@ -45,17 +45,20 @@ void AABItemBox::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	// 에셋매니저로부터 데이터 로드
-	const UAssetManager& AM = UAssetManager::Get();
+	if (!IsValid(ItemData))
+	{
+		// 에셋매니저로부터 데이터 로드
+		const UAssetManager& AM = UAssetManager::Get();
 	
-	TArray<FPrimaryAssetId> AssetIds;
-	ensure(AM.GetPrimaryAssetIdList(TEXT("ABItemData"), AssetIds));
+		TArray<FPrimaryAssetId> AssetIds;
+		ensure(AM.GetPrimaryAssetIdList(TEXT("ABItemData"), AssetIds));
 	
-	const int32 RIdx = FMath::RandRange(0, AssetIds.Num() - 1);
-	const FSoftObjectPtr AssetPtr(AM.GetPrimaryAssetPath(AssetIds[RIdx]));
+		const int32 RIdx = FMath::RandRange(0, AssetIds.Num() - 1);
+		const FSoftObjectPtr AssetPtr(AM.GetPrimaryAssetPath(AssetIds[RIdx]));
 
-	UObject* LoadedAsset = AssetPtr.LoadSynchronous();
-	ItemData = CastChecked<UABItemData>(LoadedAsset);
+		UObject* LoadedAsset = AssetPtr.LoadSynchronous();
+		ItemData = CastChecked<UABItemData>(LoadedAsset);
+	}
 
 	Trigger->OnComponentBeginOverlap.AddDynamic(this, &AABItemBox::OnOverlapBegin);
 }

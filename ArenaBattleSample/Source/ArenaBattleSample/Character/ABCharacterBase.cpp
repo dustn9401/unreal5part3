@@ -543,9 +543,13 @@ void AABCharacterBase::TakeItem(UABItemData* InItemData)
 
 void AABCharacterBase::DrinkPotion(UABItemData* InItemData)
 {
-	if (const UABPotionItemData* PotionItemData = Cast<UABPotionItemData>(InItemData))
+	// 스텟 적용은 서버와 습득한 클라이언트만 수행
+	if (HasAuthority())
 	{
-		Stat->HealHp(PotionItemData->HealAmount);
+		if (const UABPotionItemData* PotionItemData = Cast<UABPotionItemData>(InItemData))
+		{
+			Stat->HealHp(PotionItemData->HealAmount);
+		}
 	}
 }
 
@@ -557,15 +561,24 @@ void AABCharacterBase::EquipWeapon(UABItemData* InItemData)
 			                        ? WeaponItemData->WeaponMesh.LoadSynchronous()
 			                        : WeaponItemData->WeaponMesh.Get();
 		Weapon->SetSkeletalMesh(WeaponMesh);
-		Stat->SetModifierStat(WeaponItemData->ModifierStat);
+
+		// 스텟 적용은 서버와 습득한 클라이언트만 수행
+		if (HasAuthority())
+		{
+			Stat->SetModifierStat(WeaponItemData->ModifierStat);
+		}
 	}
 }
 
 void AABCharacterBase::ReadScroll(UABItemData* InItemData)
 {
-	if (const UABScrollItemData* ScrollItemData = Cast<UABScrollItemData>(InItemData))
+	// 스텟 적용은 서버와 습득한 클라이언트만 수행
+	if (HasAuthority())
 	{
-		Stat->AddBaseStat(ScrollItemData->BaseStat);
+		if (const UABScrollItemData* ScrollItemData = Cast<UABScrollItemData>(InItemData))
+		{
+			Stat->AddBaseStat(ScrollItemData->BaseStat);
+		}
 	}
 }
 
