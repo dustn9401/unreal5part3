@@ -18,7 +18,7 @@
 #include "UI/ABHUDWidget.h"
 #include "GameFramework/GameModeBase.h"
 
-AABCharacterPlayer::AABCharacterPlayer()
+AABCharacterPlayer::AABCharacterPlayer(const FObjectInitializer& ObjectInitializer)
 {
 	TeamType = ECharacterTeamType::Red;
 	
@@ -73,6 +73,12 @@ AABCharacterPlayer::AABCharacterPlayer()
 	if (InputAttackRef.Object)
 	{
 		AttackAction = InputAttackRef.Object;
+	}
+
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputTeleportRef(TEXT("/Script/EnhancedInput.InputAction'/Game/ArenaBattle/Input/Actions/IA_Teleport.IA_Teleport'"));
+	if (InputTeleportRef.Object)
+	{
+		TeleportAction = InputTeleportRef.Object;
 	}
 }
 
@@ -185,6 +191,7 @@ void AABCharacterPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	EnhancedInputComponent->BindAction(ShoulderLookAction, ETriggerEvent::Triggered, this, &AABCharacterPlayer::ShoulderLook);
 	EnhancedInputComponent->BindAction(QuarterMoveAction, ETriggerEvent::Triggered, this, &AABCharacterPlayer::QuarterMove);
 	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AABCharacterPlayer::AttackByInput);
+	EnhancedInputComponent->BindAction(TeleportAction, ETriggerEvent::Triggered, this, &AABCharacterPlayer::Teleport);
 }
 
 void AABCharacterPlayer::ChangeCharacterControl()
@@ -309,6 +316,22 @@ void AABCharacterPlayer::SetupHUDWidget(UABHUDWidget* InHUDWidget)
 		InHUDWidget->UpdateHpBar(Stat->GetCurrentHp());
 		Stat->OnHpChanged.AddUObject(InHUDWidget, &UABHUDWidget::UpdateHpBar);
 	}
+}
+
+void AABCharacterPlayer::Teleport()
+{
+	// 현재 컨트롤러의 Yaw 방향으로 텔레포트
+	const FRotator CurrentRotation = GetController()->GetControlRotation();
+	constexpr float TeleportDistance = 300.0f;
+
+	const FRotator YawRotation(0.0f, CurrentRotation.Yaw, 0.0f);
+
+	const FQuat QuatRotation = YawRotation.Quaternion().GetNormalized();
+	const FVector Direction = QuatRotation.GetForwardVector();
+	const FVector MoveVector = Direction * TeleportDistance;
+	FVector DestLoc = GetActorLocation() + MoveVector;
+
+	
 }
 
 void AABCharacterPlayer::SetCharacterControlData(const UABCharacterControlData* CharacterControlData)

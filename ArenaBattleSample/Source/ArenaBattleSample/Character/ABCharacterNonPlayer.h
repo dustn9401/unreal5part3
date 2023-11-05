@@ -17,7 +17,7 @@ class ARENABATTLESAMPLE_API AABCharacterNonPlayer : public AABCharacterBase, pub
 	GENERATED_BODY()
 
 public:
-	AABCharacterNonPlayer();
+	AABCharacterNonPlayer(const FObjectInitializer& ObjectInitializer);
 
 protected:
 	virtual void PostInitializeComponents() override;

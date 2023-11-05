@@ -8,7 +8,7 @@
 #include "Physics/ABCollision.h"
 #include "Player/ABCharacterPlayer.h"
 
-AABCharacterNonPlayer::AABCharacterNonPlayer()
+AABCharacterNonPlayer::AABCharacterNonPlayer(const FObjectInitializer& ObjectInitializer)
 {
 	TeamType = ECharacterTeamType::Blue;
 	GetMesh()->SetHiddenInGame(true);

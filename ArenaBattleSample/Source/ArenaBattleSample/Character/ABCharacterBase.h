@@ -49,7 +49,7 @@ public IABCharacterItemInterface
 
 public:
 	// Sets default values for this character's properties
-	AABCharacterBase();
+	AABCharacterBase(const FObjectInitializer& ObjectInitializer);
 
 	virtual void PostInitializeComponents() override;
 
