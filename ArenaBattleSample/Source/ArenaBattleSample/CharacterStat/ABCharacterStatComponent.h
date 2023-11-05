@@ -58,21 +58,23 @@ public:
 		OnRep_ModifierStat();
 	}
 
+	// total stat
+	FORCEINLINE FABCharacterStat GetTotalStat() const {return BaseStat + ModifierStat;}
+	
 	// HP
 	FORCEINLINE float GetCurrentHp() const {return CurrentHp;}
 	FORCEINLINE float GetMaxHp() const {return MaxHp;}
+	
+	void SetCurrentHp(float NewHp);
+	void UpdateMaxHp(const FABCharacterStat& InBaseStat, const FABCharacterStat& InModifierStat);
+	
 	FORCEINLINE void HealHp(float InHealAmount) { SetCurrentHp(CurrentHp + InHealAmount); }
-
 	
-	FORCEINLINE FABCharacterStat GetTotalStat() const {return BaseStat + ModifierStat;}
-	
-	
+	// attack
 	float GetAttackRadius() const {return AttackRadius;}
 	float ApplyDamage(float InDamage);
 
 protected:
-	void SetCurrentHp(float NewHp);
-	void SetMaxHp(float NewMaxHp);
 
 	// Transient: 디스크에 저장하지 않음
 	UPROPERTY(ReplicatedUsing=OnRep_CurrentHp, Transient, VisibleInstanceOnly, Category=Stat)

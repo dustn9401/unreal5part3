@@ -19,10 +19,13 @@ void UABCharacterStatComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
 
+
 	// 이 함수는 PostNetInit 이후에 호출되기 때문에, 아래 조건문은 유효함
-	AB_SUB_LOG(LogABNetwork, Log, TEXT("HasAuth=%d"), GetOwner()->HasAuthority())
 	if (GetOwner()->HasAuthority())
 	{
+		// 순서 중요, 첫 스텟 초기화보다 앞에 있어야 함
+		OnStatChanged.AddUObject(this, &UABCharacterStatComponent::UpdateMaxHp);
+		
 		// 위젯, HUD 생성보다 먼저 호출되어야 함
 		SetLevelStat(CurrentLevelNumber);
 		SetCurrentHp(MaxHp);
@@ -57,8 +60,11 @@ void UABCharacterStatComponent::SetCurrentHp(float NewHp)
 	OnRep_CurrentHp();
 }
 
-void UABCharacterStatComponent::SetMaxHp(float NewMaxHp)
+void UABCharacterStatComponent::UpdateMaxHp(const FABCharacterStat& InBaseStat, const FABCharacterStat& InModifierStat)
 {
+	ensureMsgf(GetOwner()->HasAuthority(), TEXT("GetOwner()->HasAuthority() == false!!!"));
+	
+	const float NewMaxHp = GetTotalStat().MaxHp;
 	if (FMath::IsNearlyEqual(MaxHp, NewMaxHp)) return;
 	
 	// 최대 체력이 낮아지는 경우, 현재 Hp값도 체크해줘야함
@@ -74,28 +80,12 @@ void UABCharacterStatComponent::SetMaxHp(float NewMaxHp)
 void UABCharacterStatComponent::OnRep_BaseStat()
 {
 	AB_SUB_LOG(LogABNetwork, Log, TEXT("Start"));
-
-	const float NewMaxHp = GetTotalStat().MaxHp;
-	if (!FMath::IsNearlyEqual(MaxHp, NewMaxHp))
-	{
-		MaxHp = NewMaxHp;
-		OnRep_MaxHp();
-	}
-	
 	OnStatChanged.Broadcast(BaseStat, ModifierStat);
 }
 
 void UABCharacterStatComponent::OnRep_ModifierStat()
 {
 	AB_SUB_LOG(LogABNetwork, Log, TEXT("Start"));
-
-	const float NewMaxHp = GetTotalStat().MaxHp;
-	if (!FMath::IsNearlyEqual(MaxHp, NewMaxHp))
-	{
-		MaxHp = NewMaxHp;
-		OnRep_MaxHp();
-	}
-	
 	OnStatChanged.Broadcast(BaseStat, ModifierStat);
 }
 
