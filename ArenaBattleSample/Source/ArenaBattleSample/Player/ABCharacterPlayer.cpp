@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Character/ABCharacterControlData.h"
+#include "Character/ABCharacterMovementComponent.h"
 #include "Character/ABCharacterNonPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Interface/ABGameInterface.h"
@@ -19,6 +20,7 @@
 #include "GameFramework/GameModeBase.h"
 
 AABCharacterPlayer::AABCharacterPlayer(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<UABCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	TeamType = ECharacterTeamType::Red;
 	

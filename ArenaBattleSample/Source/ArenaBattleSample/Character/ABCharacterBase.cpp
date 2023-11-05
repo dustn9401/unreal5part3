@@ -26,6 +26,7 @@ DEFINE_LOG_CATEGORY(LogABCharacter)
 
 // Sets default values
 AABCharacterBase::AABCharacterBase(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	TeamType = ECharacterTeamType::Red;
 	

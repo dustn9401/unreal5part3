@@ -9,6 +9,7 @@
 #include "Player/ABCharacterPlayer.h"
 
 AABCharacterNonPlayer::AABCharacterNonPlayer(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	TeamType = ECharacterTeamType::Blue;
 	GetMesh()->SetHiddenInGame(true);
