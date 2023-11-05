@@ -64,4 +64,48 @@ public:
 	{
 		return FString::Printf(TEXT("MaxHp: %f, Attack: %f, AttackRange: %f, AttackSpeed: %f, MovementSpeed: %f"), MaxHp, Attack, AttackRange, AttackSpeed, MovementSpeed);
 	}
+
+	bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess)
+	{
+		{
+			uint32 MaxHpInt = static_cast<uint32>(MaxHp);
+			Ar.SerializeIntPacked(MaxHpInt);
+			MaxHp = static_cast<float>(MaxHpInt);
+		}
+
+		{
+			uint32 AttackInt = static_cast<uint32>(Attack);
+			Ar.SerializeIntPacked(AttackInt);
+			Attack = static_cast<float>(AttackInt);
+		}
+
+		{
+			uint32 AttackRangeInt = static_cast<uint32>(AttackRange);
+			Ar.SerializeIntPacked(AttackRangeInt);
+			AttackRange = static_cast<float>(AttackRangeInt);
+		}
+
+		{
+			uint32 AttackSpeedInt = static_cast<uint32>(AttackSpeed);
+			Ar.SerializeIntPacked(AttackSpeedInt);
+			AttackSpeed = static_cast<float>(AttackSpeedInt);
+		}
+
+		{
+			uint32 MovementSpeedInt = static_cast<uint32>(MovementSpeed);
+			Ar.SerializeIntPacked(MovementSpeedInt);
+			MovementSpeed = static_cast<float>(MovementSpeedInt);
+		}
+		
+		return true;
+	}
+};
+
+template<>
+struct TStructOpsTypeTraits<FABCharacterStat> : public TStructOpsTypeTraitsBase2<FABCharacterStat>
+{
+	enum
+	{
+		WithNetSerializer = true,
+	};
 };
